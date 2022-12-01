@@ -1,0 +1,110 @@
+.search-bar{
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    .title{
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        align-items: center;
+        font-weight: bold;
+        font-size: 20px;
+        .icon{
+            font-size: 25px;
+        }
+    }
+    .search-section{
+        background-color: #eaebeb;
+        border: 1px solid #d3d3d3;
+        border-radius: 25px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        .button{
+            border-top: 1px solid black;
+            align-self: center;
+            button{
+                border: none;
+                border-radius: 25px;
+                cursor: pointer;
+                font-size: 32px;
+            }
+        }
+        .search-config{
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            .category-search{
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+                span{
+                    font-size: 18px;
+                }
+                .category-grid{
+                    display: grid;
+                    row-gap: 10px;
+                    @media only screen and (max-width: 768px) {
+                        grid-template-columns: auto auto auto;
+                    }
+                    @media only screen and (min-width: 768px) {
+                        grid-template-columns: auto auto auto auto;
+                    }
+                    @media only screen and (min-width: 992px) {
+                        grid-template-columns: auto auto auto auto auto;
+                    }
+                }
+            }
+            .filter-type{
+                display: flex;
+                flex-direction: row;
+                gap: 5px;
+                align-items: center;
+                span{
+                    font-size: 18px;
+                }
+                .filter-options{
+                    width: 200px;
+                }
+            }
+            .submit-buttons{
+                align-self: center;
+                display: flex;
+                flex-direction: row;
+                gap: 10px;
+                button{
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    gap: 10px;
+                    padding: 10px;
+                    border: none;
+                    border-radius: 5px;
+                    color: white;
+                    cursor: pointer;
+                    span{
+                        font-size: 16px;
+                    }
+                    .icon{
+                        font-size: 20px;
+                    }
+                    transition: 0.3s;
+                    &:hover{
+                        background-color: black;
+                        button{
+                            background-color: black;
+                        }
+                    }
+                }
+                .search-button{
+                    background-color: #5eb95b;
+                }
+                .reset-button{
+                    background-color: #428bca;
+                }
+            }
+        }
+    }
+}

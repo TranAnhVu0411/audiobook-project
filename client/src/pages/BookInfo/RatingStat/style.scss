@@ -1,0 +1,84 @@
+.rating-stat{
+    display: flex;
+    flex-direction: row;
+    .star-icon{
+        color: #ffbc09
+    }
+    .rating-avg-section{
+        display: flex;
+        flex-direction: row;
+        gap: 20px;
+        .rating-avg-section-star-icon{
+            font-size: 500%;
+        }
+        .rating-avg{
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            .avg-rating{
+                display: flex;
+                flex-direction: row;
+                align-items: flex-end;
+                span{
+                    font-weight: bold;
+                }
+                span:first-child{
+                    font-size: 50px
+                }
+            }
+            .total-rating{
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+            }
+        }
+    }
+    .rating-stat-section{
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        justify-content: center;
+        .rating-stat-component{
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            .rating-component-header{
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+            }
+            .rating-container{
+                height: 20px;
+                width: 100%;
+                background-color: #e0e0de;
+                border-radius: 50px;
+                margin: 50;
+                .rating-filler{
+                    height: 100%;
+                    background-color: red;
+                    border-radius: inherit;
+                    text-align: right;
+                    span{
+                        padding: 5;
+                        color: white;
+                        font-weight: 'bold';
+                    }
+                }
+            }
+        }
+    }
+    @media only screen and (max-width: 768px) {
+        flex-direction: column;
+        gap: 25px;
+    }
+    @media only screen and (min-width: 768px) {
+        flex-direction: row;
+        gap: 20px;
+        .rating-stat-section{
+            flex:6;
+        }
+        .rating-avg-section{
+            flex: 3
+        }
+    }
+}

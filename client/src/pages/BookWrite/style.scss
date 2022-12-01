@@ -1,0 +1,195 @@
+.write{
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border-radius: 25px;
+    background-color: white;
+    margin-top: 20px;
+    .write-header{
+        align-self: center;
+        h1{
+            margin: 0;
+        }
+    }
+    .form{
+        // hiển thị lỗi
+        .error{
+            flex-direction: row;
+            justify-content: space-between;
+            background-color: #FFBABA;
+            color: #D8000C;
+            border-radius: 25px;
+            padding: 5px 10px;
+        }
+        display: flex;
+        // input văn bản
+        .text-form{
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+            // input title
+            .title-input{
+                display: flex;
+                flex-direction: column;
+                .input{
+                    display: flex;
+                    flex-direction: column;
+                    align-items: flex-start;
+                    gap: 5px;
+                    label{
+                        font-size: 16px;
+                    }
+                    input{
+                        font-size: 16px;
+                        width: 100%;
+                        height: 36px;
+                    } 
+                }
+            }
+            // input author
+            .author-input{
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+                label{
+                    font-size: 16px;  
+                }
+                .author-input-output{
+                    font-size: 16px;
+                    width: 100%
+                }
+            }
+            // input description
+            .description-input{
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+                .editor-container{
+                    height: 150px;
+                    padding-bottom: 10px;
+                    .editor{
+                        height: 100%;
+                    }
+                }
+            }
+            .category-input{
+                padding-top: 30px;
+                display: flex;
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 5px;
+                label{
+                    font-size: 16px;  
+                }
+                .category-select{
+                    font-size: 16px;
+                    width: 100%
+                }
+            }
+        }
+        // input files
+        .file-form{
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            .button{
+                display: flex;
+                flex-direction: row;
+                justify-content: space-between;
+                .upload{
+                    display: flex;
+                    flex-direction: row;
+                    gap: 10px;
+                    align-self: center;
+                    padding: 10px;
+                    border-radius: 25px;
+                    background-color: #0277ff;
+                    color: white;
+                    transition: 0.3s;
+                    &:hover{
+                        cursor: pointer;
+                        background-color: black;
+                    }
+                }
+                .delete{
+                    align-self: center;
+                    border: none;
+                    background-color: white;
+                    font-size: 20px;
+                    transition: 0.3s;
+                    &:hover{
+                        color: red;
+                    }
+                }
+            }
+            @media only screen and (max-width: 992px) {
+                align-items: center;
+                .button{
+                    width: 50%;
+                }
+                img{
+                    width: 50%;
+                    height: auto;
+                }   
+            }
+            @media only screen and (min-width: 992px) {
+                img{
+                    width: 100%;
+                    height: auto;
+                }   
+            }
+        }
+        @media only screen and (min-width: 992px) {
+            flex-direction: row;
+            gap: 20px;
+            .text-form{
+                flex:6;
+            }
+            .file-form{
+                flex: 3
+            }
+        }
+        @media only screen and (max-width: 992px) {
+            flex-direction: column;
+            gap: 25px;
+        }
+    }
+    .submit{
+        align-self: center;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        button{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            span{
+                font-size: 16px;
+            }
+            .icon{
+                font-size: 20px;
+            }
+            transition: 0.3s;
+            &:hover{
+                background-color: black;
+                button{
+                    background-color: black;
+                }
+            }
+        }
+        .submit-button{
+            background-color: #5eb95b;
+        }
+        .reset-button{
+            background-color: #428bca;
+        }
+    }
+}

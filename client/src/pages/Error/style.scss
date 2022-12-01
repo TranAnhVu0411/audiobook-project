@@ -1,0 +1,43 @@
+.error{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    img{
+        width: 400px;
+        height: auto;
+    }
+    .error-content{
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        .error-name{
+            color: #e9624e;
+            font-size: 30px;
+            font-weight: bold;
+        }
+        .home-button{
+            align-self: center;
+            button{
+                border: none;
+                border-radius: 25px;
+                padding: 10px;
+                background-color: #5eb95b;
+                color: white;
+                transition: 0.3s;
+                &:hover{
+                    background-color: black;
+                }
+            }
+        }
+    }
+    @media only screen and (max-width: 768px){
+        flex-direction: column;
+        .error-content{
+            align-items: center;
+        }
+    }
+    @media only screen and (min-width: 768px){
+        flex-direction: row;
+    }
+}

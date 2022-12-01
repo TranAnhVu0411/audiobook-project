@@ -1,0 +1,12 @@
+.index{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    .result-number{
+        font-size: 20px;
+        border-bottom: 1px solid black;
+    }
+    .pagination{
+        align-self: center;
+    }
+}

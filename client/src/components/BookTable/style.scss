@@ -1,0 +1,18 @@
+.book-table{
+    display: grid;
+    row-gap: 5px;
+    justify-content: center;
+    gap: 20px 0px;
+    @media only screen and (max-width: 600px) {
+        grid-template-columns: auto auto;
+    }
+    @media only screen and (min-width: 600px) {
+        grid-template-columns: auto auto auto;
+    }
+    @media only screen and (min-width: 992px) {
+        grid-template-columns: auto auto auto auto;
+    }
+    @media only screen and (min-width: 1200px) {
+        grid-template-columns: auto auto auto auto auto;
+    }
+}

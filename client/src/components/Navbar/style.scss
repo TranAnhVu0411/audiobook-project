@@ -1,0 +1,194 @@
+.navbar{
+    .container{
+        display: flex;
+        border-bottom: 1px solid grey;
+
+        @media only screen and (min-width: 992px) {
+            flex-direction: row;
+            justify-content: space-between;
+        }
+
+        @media only screen and (max-width: 992px) {
+            flex-direction: column;
+        }
+        // Logo and button icons
+        .button-container{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+
+            // Logo
+            .logo{
+                display: flex;
+                img{
+                    align-self: center;
+                }
+                h1{
+                    align-self: center;
+                }
+                // Responsive logo
+                @media only screen and (max-width: 600px) {
+                    img{
+                        width: 100px;
+                        height: 100px;
+                    }
+                    h1{
+                        display: none;
+                    }
+                }
+                @media only screen and (min-width: 600px) {
+                    img{
+                        width: 100px;
+                        height: 100px;
+                    }
+                    h1{
+                        font-size: 24px;
+                    }
+                }
+                @media only screen and (min-width: 992px) {
+                    img{
+                        width: 110px;
+                        height: 110px;
+                    }
+                    h1{
+                        font-size: 28px;
+                    }  
+                }
+                @media only screen and (min-width: 1200px) {
+                    img{
+                        width: 120px;
+                        height: 120px;
+                    }
+                    h1{
+                        font-size: 32px;
+                    } 
+                }
+            }
+            .nav-button{
+                border: none;
+                background-color: #f0f2f5;
+                font-size: 32px;
+                align-self: center;
+                @media only screen and (min-width: 992px){
+                    display: none;
+                }
+            }
+        }
+        // Các lựa chọn trong navbar
+        .nav-container{
+            // Đăng nhập, Đăng ký / Avatar người dùng
+            .auth-container{
+                display: flex;
+                flex-direction: row;
+                // justify-content: space-between;
+                gap: 15px;
+                // Đăng nhập, Đăng ký
+                .register-login-link{
+                    text-decoration:none;
+                    color: inherit;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;;
+                    gap: 5px;
+                    h6{
+                        font-weight: 300;
+                        font-size: 15px;
+                    }
+                    .icon{
+                        font-size: 25px;
+                    }
+                    transition: 0.3s;
+                    &:hover{
+                        color: orange;
+                    }
+                }
+
+                // Avatar người dùng
+                button{
+                    padding: 0;
+                    border: none;
+                    background: none;
+                    cursor: pointer;
+                    display: flex;
+                    flex-direction: row;
+                    align-items: center;
+                    gap: 5px;
+                    img {
+                        align-self: center;
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 50%;
+                        border: black solid 1px;
+                    }
+                    h6{
+                        font-weight: 300;
+                        font-size: 15px;
+                    }
+                }
+                .avatar-content{
+                    display: none;
+                    position: absolute;
+                    top: 100px;
+                    border: none;
+                    padding: 10px 10px;
+                    background-color: #f9f9f9;
+                    box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+                    min-width: 160px;
+                    z-index: 1;
+                    font-size: 15px;
+                    .avatar-link{
+                        text-decoration:none;
+                        color: inherit;
+                        display: flex;
+                        flex-direction: row;
+                        align-items: center;;
+                        gap: 5px;
+                        span{
+                            font-weight: 300;
+                            font-size: 15px;
+                        }
+                        .icon{
+                            font-size: 25px;
+                        }
+                        transition: 0.3s;
+                        &:hover{
+                            color: orange;
+                        }
+                    }
+                }
+            }
+            @media only screen and (max-width: 992px){
+                display: flex;
+                flex-direction: column;
+                .auth-container{
+                    border: none;
+                    border-top: black solid 1px;
+                    justify-content: space-around;
+                    button{
+                        cursor: auto;
+                        .icon{
+                            display: none;
+                        }
+                    }
+                    .avatar-content{
+                        position: inherit;
+                        box-shadow: none;
+                        display: flex;
+                        flex-direction: row;
+                        background-color: #f0f2f5;
+                    }
+                }
+            }
+            @media only screen and (min-width: 992px){
+                display: flex;
+                flex-direction: row-reverse;
+                gap: 15px;
+                .auth-container{
+                    border: none;
+                    border-left: black solid 1px;
+                    padding-left: 15px;
+                }
+            }
+        }
+    }
+}

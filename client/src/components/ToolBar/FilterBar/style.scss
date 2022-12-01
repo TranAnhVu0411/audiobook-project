@@ -1,0 +1,59 @@
+.filter-bar{
+    display: flex;
+    background-color: #eaebeb;
+    border: 1px solid #d3d3d3;
+    border-radius: 25px;
+    margin: 20px 0px;
+    .filter-config{
+        display: flex;
+        flex-direction: row;
+        gap: 5px;
+        align-items: center;
+        span{
+            font-weight: bold;
+        }
+        .filter-options{
+            width: 200px;
+        }
+    }
+    @media only screen and (max-width: 768px) {
+        padding: 10px;
+        flex-direction: column;
+        gap: 5px;
+        .category{
+            h2{
+                font-size: 20px;
+            }
+        }
+        .filter-config{
+            span{
+                font-size: 14px;
+            }
+        }
+    }
+    @media only screen and (min-width: 768px) {
+        padding: 0px 10px;
+        flex-direction: row;
+        justify-content: space-between;
+        .category{
+            h2{
+                font-size: 20px;
+            }
+        }
+        .filter-config{
+            span{
+                font-size: 14px;
+            }
+        }
+    }
+    @media only screen and (min-width: 992px) {
+        padding: 0px 10px;
+        flex-direction: row;
+        justify-content: space-between;
+        .category{
+            h2{
+                font-size: 25px;
+            }
+        }
+    }
+}
