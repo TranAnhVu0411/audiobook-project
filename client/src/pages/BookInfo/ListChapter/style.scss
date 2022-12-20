@@ -1,4 +1,40 @@
 .list-chapter{
+    .list-chapter-button{
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        position: relative;
+        .upload-chapter-buttons{
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+        }
+        button{
+            display: flex;
+            flex-direction: row;
+            gap: 5px;
+            align-items: center;
+            border: none;
+            border-radius: 10px;
+            padding: 10px;
+            background-color: #428bca;
+            color: white;
+            transition: 0.3s;
+            .icon{
+                font-size: 20px;
+            }
+            &:hover{
+                background-color: black;
+            }
+        }
+    }
+    .chapter-item-button{
+        display: flex;
+        flex-direction: row;
+        .chapter-dragger{
+            cursor: all-scroll;
+        }
+    }
     table{
         font-family: Arial, Helvetica, sans-serif;
         width: 100%;

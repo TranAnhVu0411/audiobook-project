@@ -1,0 +1,96 @@
+// .sentence-info{
+//     height: 100vh;
+//     border: 1px solid gray;
+//     padding: 5px;
+//     display: flex;
+//     gap: 5px;
+//     flex-direction: column;
+//     overflow: hidden;
+//     .sentence-info-button{
+//         height: 5%;
+//         display: flex;
+//         flex-direction: row;
+//         justify-content: flex-start;
+//         gap: 10px;
+//         border-bottom: 1px solid gray;
+//         padding: 10px;
+//         button{
+//             font-size: 16px;
+//             border: none;
+//             border-radius: 5px;
+//             padding: 5px 20px;
+//             background-color: #428bca;
+//             color: white;
+//             cursor: pointer;
+//             transition: 0.3s;
+//             &:hover{
+//                 background-color: black;
+//             }
+//         }
+//     }
+//     .sentence-info-list{
+//         height: 90%;
+//         display: flex;
+//         gap: 20px;
+//         flex-direction: column;
+//         overflow: auto;
+//         border-bottom: 1px solid gray;
+//         .sentence-info-box{
+//             padding: 5px;
+//             border: 1px solid gray;
+//             border-radius: 5px;
+//             display: grid;
+//             align-items: center;
+//             grid-template-columns: 1fr 5fr 1fr;
+//             gap: 5px;
+//             .sentence-info-box-color{
+//                 display: flex;
+//                 flex-direction: column;
+//                 gap: 10px;
+//                 justify-content: flex-start;
+//             }
+//             .sentence-info-box-text{
+//                 height: 100px;
+//                 overflow: auto;
+//             }
+//         }
+//     }
+// }
+
+.sentence-info{
+    height: 100vh;
+    display: flex;
+    gap: 10px;
+    flex-direction: column;
+    overflow: hidden;
+    .sentence-info-button{
+        height: 5%;
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 10px;
+
+        border: 1px solid gray;
+        padding: 10px;
+        button{
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 20px;
+            background-color: #428bca;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+            &:hover{
+                background-color: black;
+            }
+        }
+    }
+    
+    .sentence-info-list{
+        height: 95%;
+        overflow: auto;
+        border: 1px solid gray;
+        padding: 5px;
+    }
+}

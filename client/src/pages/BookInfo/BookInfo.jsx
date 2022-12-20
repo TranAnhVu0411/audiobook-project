@@ -1,8 +1,7 @@
-import React, {useEffect, useState, useContext} from "react";
+import React, {useEffect, useState, useContext, useRef} from "react";
 import {useLocation, useNavigate} from 'react-router-dom';
-import {main_axios_instance} from '../../service/custom-axios';
+import {main_axios_instance, pdf_axios_instance} from '../../service/custom-axios';
 import "./style.scss";
-import { RiEdit2Line, RiContactsBookUploadLine, RiFileUploadLine } from 'react-icons/ri';
 import {FaHeadphonesAlt, FaFilePdf} from 'react-icons/fa';
 import {getBackgroundColor, getBorderColor} from '../../util/category-color'; 
 import LoadingScreen from "../../components/LoadingScreen/LoadingScreen";
@@ -16,6 +15,8 @@ import RatingStat from "./RatingStat/RatingStat";
 import ListChapter from "./ListChapter/ListChapter"
 
 const BookInfo = () => {
+    const chapterRef = useRef()
+
     const [book, setBook] = useState({});
     const [comments, setComments] = useState([])
     const [userRating, setUserRating] = useState([]) // Nếu rating tồn tại => update, ngược lại => create
@@ -45,7 +46,7 @@ const BookInfo = () => {
                 setUserRating([])
             }
 
-            const chaptersRes = await main_axios_instance.get(`/chapter/book/${bookId}`)
+            const chaptersRes = await pdf_axios_instance.get(`/books/${bookId}`)
             setChapters(chaptersRes.data)
             
             const bookRatingRes = await main_axios_instance.get(`/rating/book/${bookId}`)
@@ -138,17 +139,12 @@ const BookInfo = () => {
                             {(getRole(currentUser) === "admin") ?
                                 (<>
                                     <button onClick = {() => navigate(`/book/info/${book._id}/update`)}>
-                                        <RiEdit2Line className="icon"/> 
-                                        <span>Chỉnh sửa</span>
+                                        <span>Chỉnh sửa thông tin sách</span>
                                     </button>
-                                    <button onClick = {() => navigate(`/book/info/${book._id}/chapter/new`)}>
-                                        <RiContactsBookUploadLine className="icon"/> 
-                                        <span>Upload chương truyện</span>
+                                    <button onClick={() => chapterRef.current.scrollIntoView({ behavior: 'smooth' })}>
+                                        <span>Danh sách chương</span>
                                     </button>
-                                    <button onClick = {() => navigate(`/book/info/${book._id}/pdf/new`)}>
-                                        <RiFileUploadLine className="icon"/> 
-                                        <span>Upload sách</span>
-                                    </button>
+                                    
                                 </>) : (<>
                                     <button>
                                         <FaFilePdf className="icon"/> 
@@ -173,9 +169,9 @@ const BookInfo = () => {
                         }}
                     ></p>  
                 </div>
-                <div className="chapter">
+                <div className="chapter" ref={chapterRef}>
                     <h2>Danh sách chương</h2>
-                    <ListChapter chapters = {chapters} />
+                    <ListChapter chapters = {chapters} bookId={bookId} setIsLoad={setIsLoad}/>
                 </div>
                 <div className="rating">
                     <div className="rating-write-section">

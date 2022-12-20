@@ -1,0 +1,29 @@
+.page-write{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    .expand-button{
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        align-items: center;
+        button{
+            display: flex;
+            flex-direction: row;
+            gap: 5px;
+            align-items: center;
+            border: none;
+            border-radius: 10px;
+            padding: 10px;
+            background-color: #428bca;
+            color: white;
+            transition: 0.3s;
+            .icon{
+                font-size: 20px;
+            }
+            &:hover{
+                background-color: black;
+            }
+        }
+    }
+}

@@ -15,6 +15,9 @@
             display: flex;
             flex-direction: column;
             align-items: center;
+            hr {
+                width: 100%;
+            }
         }
         .text-input{
             display: flex;
@@ -34,22 +37,26 @@
     .file-input{
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 20px;
         background-color: white;
         border-radius: 25px;
         padding: 10px;
+        padding: 30px;
+        h2{
+            margin: 0;
+        }
         .upload-header{
             display: flex;
             flex-direction: row;
             align-items: center;
             gap: 5px;
         }
-        .button{
+        .file-input-button{
             display: flex;
             flex-direction: row;
             align-items: center;
             gap: 20px;
-            .upload{
+            .file-input-upload{
                 display: flex;
                 flex-direction: row;
                 gap: 10px;
@@ -63,7 +70,7 @@
                     background-color: black;
                 }
             }
-            .delete{
+            .file-input-delete{
                 display: flex;
                 flex-direction: row;
                 gap: 10px;
@@ -80,7 +87,7 @@
                 }
             }
         }
-        .submit{
+        .chapter-submit{
             align-self: center;
             button{
                 display: flex;
@@ -91,6 +98,7 @@
                 border: none;
                 border-radius: 5px;
                 padding: 10px;
+                color: white;
                 span{
                     font-size: 16px;
                 }
@@ -100,7 +108,6 @@
                 transition: 0.3s;
                 &:hover{
                     background-color: black;
-                    color: white;
                 }
             }
         }

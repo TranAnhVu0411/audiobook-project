@@ -1,12 +1,19 @@
-import React from "react";
+import React, { useContext } from "react";
 import {useNavigate} from 'react-router-dom'
 import error from '../../image/error.png'
 import './style.scss';
+import { AuthContext } from "../../context/AuthContextProvider";
+import { getRole } from "../../context/role";
 
 const Error = () => {
+    const {currentUser} = useContext(AuthContext)
     const navigate = useNavigate();
     const handleClick = () => {
-        navigate('/')
+        if (getRole(currentUser)==='admin'){
+            navigate('/dashboard')
+        }else{
+            navigate('/')
+        }
     }
     return (
         <div className="error">

@@ -19,6 +19,8 @@ import BookInfo from './pages/BookInfo/BookInfo';
 import ChapterWrite from './pages/ChapterWrite/ChapterWrite';
 import PdfWrite from './pages/PdfWrite/PdfWrite';
 import { ToastContainer } from "react-toastify";
+import PageEdit from './pages/PageEdit/PageEdit';
+import ChapterEdit from './pages/ChapterEdit/ChapterEdit';
 
 
 function App() {
@@ -44,6 +46,8 @@ function App() {
                   <Route path="/booklist" element={<Index />} />
                   <Route path="book/info/:id/chapter/new" element={<ChapterWrite />} />
                   <Route path="book/info/:id/pdf/new" element={<PdfWrite />} />
+                  <Route path="chapter/:id/edit" element={<ChapterEdit/>}/>
+                  <Route path="/page/:id/edit" element={<PageEdit />} />
                   <Route path="/book/info/:id/update" element={<BookWrite />} /> 
               </Route>
               <Route path="/" element={<Home />} />

@@ -20,10 +20,10 @@ const PdfWrite = () => {
 
     const [chapterForm, setChapterForm] = useState({
         id: "",
-        chapterIndex: "",
-        chapterName: "",
-        chapterPageFrom: "",
-        chapterPageTo: "",
+        index: "",
+        name: "",
+        from: "",
+        to: "",
     })
     const [mode, setMode] = useState({state: 'submit', id: ""})
     const [chapterList, setChapterList] = useState([])
@@ -56,10 +56,10 @@ const PdfWrite = () => {
     const resetChapterForm = () => {
         setChapterForm({
             id: "",
-            chapterIndex: 0,
-            chapterName: "",
-            chapterPageFrom: 0,
-            chapterPageTo: 0,
+            index: "",
+            name: "",
+            from: "",
+            to: "",
         })
     }
 
@@ -73,10 +73,10 @@ const PdfWrite = () => {
         }
         setChapterForm(prev => ({...prev,
             id: editChapter.id,
-            chapterIndex: editChapter.chapterIndex,
-            chapterName: editChapter.chapterName,
-            chapterPageFrom: editChapter.chapterPageFrom,
-            chapterPageTo: editChapter.chapterPageTo,
+            index: editChapter.index,
+            name: editChapter.name,
+            from: editChapter.from,
+            to: editChapter.to,
         }))
         setMode({state: 'edit', id: id})
     }
@@ -98,19 +98,19 @@ const PdfWrite = () => {
         if (mode.state === "submit"){
             let newChapter = {
                 id: uuidv4(),
-                chapterIndex: chapterForm.chapterIndex,
-                chapterName: chapterForm.chapterName,
-                chapterPageFrom: chapterForm.chapterPageFrom,
-                chapterPageTo: chapterForm.chapterPageTo
+                index: chapterForm.index,
+                name: chapterForm.name,
+                from: chapterForm.from,
+                to: chapterForm.to
             };
             setChapterList(previousChapterList => [...previousChapterList, newChapter])
         }else{
             setChapterList(chapterList.map(chapter => {
                 if (chapter.id === chapterForm.id){
-                    chapter.chapterIndex = chapterForm.chapterIndex
-                    chapter.chapterName = chapterForm.chapterName
-                    chapter.chapterPageFrom = chapterForm.chapterPageFrom
-                    chapter.chapterPageTo = chapterForm.chapterPageTo
+                    chapter.index = chapterForm.index
+                    chapter.name = chapterForm.name
+                    chapter.from = chapterForm.from
+                    chapter.to = chapterForm.to
                     return chapter
                 }
                 return chapter
@@ -123,28 +123,38 @@ const PdfWrite = () => {
     const handleSubmit = async(e) => {
         setIsUpload(false)
         e.preventDefault();
-        let chaptersForm = new FormData();
-        chapterList.forEach(chapter => {
-            chaptersForm.append(`chapters`, JSON.stringify(chapter));
-        });
-        chaptersForm.append("bookId", bookId)
-        chaptersForm.append("uploadType", 'pdf')
-        let pdfForm = new FormData();
-        pdfForm.append(`pdf`, chapterPDF);
-        let bookStatusForm = new FormData();
-        bookStatusForm.append('status', 'waiting');
+        
         try{
             if (chapterPDF === null){
                 throw "empty pdf"
             }
-            const resBookStatus = await pdf_axios_instance.get(`/books/pdf/${bookId}`, bookStatusForm)
-            console.log(resBookStatus)
-            fetch(resBookStatus.data['url'], {
-                method: 'put',
-                body: pdfForm,
+
+            let urlForm = new FormData();
+            urlForm.append('type', 'book');
+            urlForm.append('id', bookId)
+            urlForm.append('data-type', 'pdf')
+            const resUrl = await pdf_axios_instance.post('/url', urlForm)
+            console.log(resUrl)
+            var pdfHeaders = new Headers();
+            pdfHeaders.append("Content-Type", chapterPDF.type);
+            await fetch(resUrl.data.url, {
+                method: 'PUT',
+                headers: pdfHeaders,
+                body: chapterPDF,
+                redirect: 'follow'
             })
-            const resChapters = await pdf_axios_instance.post('/chapters', chaptersForm)
-            console.log(resChapters)
+
+            for (let i = 0; i <chapterList.length; i++) {
+                let chapterForm = new FormData();
+                chapterForm.append("index", chapterList[i].index)
+                chapterForm.append("name", chapterList[i].name)
+                chapterForm.append("bookId", bookId)
+                chapterForm.append("status", "notready")
+                chapterForm.append("from", chapterList[i].from)
+                chapterForm.append("to", chapterList[i].to)
+                const resChapter = await pdf_axios_instance.post('/chapters', chapterForm)
+                console.log(resChapter)
+            }
             setIsUpload(true);
             toast.success("Upload pdf thành công, đang xử lý", {position: toast.POSITION.TOP_CENTER});
         }catch(err){
@@ -174,19 +184,19 @@ const PdfWrite = () => {
                     </div>
                     <div className="text-input">
                         <label>Chương số</label>
-                        <input type="number" name="chapterIndex" value={chapterForm.chapterIndex} min={1} onChange={handleChapterForm} placeholder="Nhập số chương"/>
+                        <input type="number" name="index" value={chapterForm.index} min={1} onChange={handleChapterForm} placeholder="Nhập số chương"/>
                     </div>
                     <div className="text-input">
                         <label>Tiêu đề chương</label>
-                        <input type="text" name="chapterName" value={chapterForm.chapterName} onChange={handleChapterForm} placeholder="Nhập tên chương"/>
+                        <input type="text" name="name" value={chapterForm.name} onChange={handleChapterForm} placeholder="Nhập tên chương"/>
                     </div>
                     <div className="text-input">
                         <label>Bắt đầu từ trang</label>
-                        <input type="number" name="chapterPageFrom" value={chapterForm.chapterPageFrom} min={1} onChange={handleChapterForm} placeholder="Nhập trang bắt đầu"/>
+                        <input type="number" name="from" value={chapterForm.from} min={1} onChange={handleChapterForm} placeholder="Nhập trang bắt đầu"/>
                     </div>
                     <div className="text-input">
                         <label>Kết thúc đến trang</label>
-                        <input type="number" name="chapterPageTo" value={chapterForm.chapterPageTo} min={1} onChange={handleChapterForm} placeholder="Nhập trang kết thúc"/>
+                        <input type="number" name="to" value={chapterForm.to} min={1} onChange={handleChapterForm} placeholder="Nhập trang kết thúc"/>
                     </div>
                     <div className='item-submit'>
                         <button className="item-submit-button" onClick={() => handleSubmitItem()}> 
@@ -216,10 +226,10 @@ const PdfWrite = () => {
                             {chapterList.map(chapter => {
                                return(
                                <tr key={chapter.id} className={`${mode.state==='edit' && mode.id===chapter.id ? "updating" : ""}`}>
-                                    <td>{chapter.chapterIndex}</td>
-                                    <td>{chapter.chapterName}</td>
-                                    <td>{chapter.chapterPageFrom}</td>
-                                    <td>{chapter.chapterPageTo}</td>
+                                    <td>{chapter.index}</td>
+                                    <td>{chapter.name}</td>
+                                    <td>{chapter.from}</td>
+                                    <td>{chapter.to}</td>
                                     <td>
                                         <button onClick={() => handleShowEdit(chapter.id)}>
                                             <FaRegEdit/>

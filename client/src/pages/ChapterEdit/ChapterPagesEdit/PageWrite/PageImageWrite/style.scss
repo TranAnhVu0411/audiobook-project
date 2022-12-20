@@ -1,0 +1,71 @@
+.page-image-write{
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: 1px solid gray;
+    border-top: none;
+    border-radius: 10px;
+    padding: 10px;
+    .page-image-write-form{
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        .file-input-header{
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            align-items: center;
+            label{
+                padding: 10px 0px;
+            }
+            div{
+                display: flex;
+                flex-direction: row;
+                gap: 10px;
+                button{
+                    gap: 10px;
+                    align-self: center;
+                    padding: 10px;
+                    border: none;
+                    border-radius: 10px;
+                    color: white;
+                    transition: 0.3s;
+                    &:hover{
+                        background-color: black;
+                    }
+                }
+                .preview{
+                    background-color: #0277ff;;
+                }
+                .delete{
+                    background-color: red;
+                }
+            }
+        }
+        input{
+            width: 100%
+        }
+    }
+    .page-image-write-submit{
+        align-self: center;
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        button{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+            background-color: #5eb95b;
+            &:hover{
+                background-color: black;
+            }
+        }
+    }
+}

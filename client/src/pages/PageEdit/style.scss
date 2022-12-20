@@ -1,0 +1,48 @@
+.page-edit{
+    margin-top: 10px;
+    background-color: white;
+    border-radius: 25px;
+    padding: 20px;
+    
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    .page-edit-header{
+        align-self: center;
+        h1{
+            margin: 0px;
+        }
+        hr{
+            width: 100%
+        }
+    }
+    .page-edit-section{
+        @media only screen and (max-width: 992px) {
+            display: grid;
+            gap: 10px;
+            grid-template-rows: 1fr 1fr;
+        }
+        @media only screen and (min-width: 992px) {
+            display: grid;
+            gap: 10px;
+            grid-template-columns: 2fr 1fr;
+        }
+    }
+    .page-edit-submit{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        button{
+            border: none;
+            border-radius: 5px;
+            padding: 5px 20px;
+            background-color: #5eb95b;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+            &:hover{
+                background-color: black;
+            }
+        }
+    }
+}

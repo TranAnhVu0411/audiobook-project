@@ -25,26 +25,26 @@ const SearchBar = (props) => {
     const { currentUser } = useContext(AuthContext);
 
     // Nút thu gọn thanh tìm kiếm
-    const [openSearch, setOpenSearch] = useState({
+    const [open, setOpen] = useState({
         state: true,
         icon: <IoIosArrowDropup/>
     })
 
     const handleToogleSearch = () => {
-        if(openSearch.state){
-            setOpenSearch({
+        if(open.state){
+            setOpen({
                 state: false,
                 icon: <IoIosArrowDropdown/>
             })
         }else{
-            setOpenSearch({
+            setOpen({
                 state: true,
                 icon: <IoIosArrowDropup/>
             })
         }
     }
     let viewMode = {}
-    if(openSearch.state){
+    if(open.state){
         viewMode.display = "flex"
     }else{
         viewMode.display = "none"
@@ -64,13 +64,13 @@ const SearchBar = (props) => {
         setCategory(prevState => prevState.map(category => {
             if (category.id === e.target.id) {
                 return {
-                ...category,
-                state: !category.state,
+                    ...category,
+                    state: !category.state,
                 }
             }
                 return category;
             })
-            )
+        )
     }
 
     // Xử lý filter
@@ -141,7 +141,7 @@ const SearchBar = (props) => {
                             {categories.map(category => {
                                 return(
                                     <div className='category-item' key={category.id}>
-                                        <input type="checkbox" name="category" id={category.id} checked={category.state} onChange={handleCategory}/>
+                                        <input type="checkbox" id={category.id} checked={category.state} onChange={handleCategory}/>
                                         <label>{category.id}</label>
                                     </div>                        
                                     ) 
@@ -170,8 +170,8 @@ const SearchBar = (props) => {
                         </button>
                     </div>
                 </div>
-                <div className='button'>
-                    <button onClick={handleToogleSearch}>{openSearch.icon}</button>
+                <div className='expand-button'>
+                    <button onClick={handleToogleSearch}>{open.icon}</button>
                 </div>
             </div>
         </div>
