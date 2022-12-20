@@ -30,5 +30,8 @@
             flex-direction: column;
             gap: 10px;
         }
+        .drag{
+            cursor: all-scroll;
+        }
     }
 }

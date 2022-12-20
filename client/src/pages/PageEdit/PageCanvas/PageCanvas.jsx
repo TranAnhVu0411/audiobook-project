@@ -142,7 +142,7 @@ const PageCanvas = (props) => {
                     }}>
                         <BiZoomOut/>
                     </button>
-                    <button title="Lưu bounding box" onClick={props.saveBoundingBox} style={{display: props.edit?"flex":"none"}}>
+                    <button title="Lưu thay đổi" onClick={props.saveBoundingBox} style={{display: props.edit?"flex":"none"}}>
                         <BiSave/>
                     </button>
             </div>

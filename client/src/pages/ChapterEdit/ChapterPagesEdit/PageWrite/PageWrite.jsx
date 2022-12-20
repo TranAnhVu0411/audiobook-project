@@ -7,7 +7,7 @@ import PageImageWrite from './PageImageWrite/PageImageWrite'
 import PagePDFWrite from './PagePDFWrite/PagePDFWrite'
 
 const PageWrite = (props) => {
-    // Nút thu gọn thanh tìm kiếm
+    // Nút thu gọn thanh thêm trang
     const [open, setOpen] = useState({
         state: true,
         icon: <GoTriangleUp/>

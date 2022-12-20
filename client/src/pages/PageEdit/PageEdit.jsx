@@ -52,11 +52,14 @@ const PageEdit = () => {
     const [edit, setEdit] = useState(false)
     // Biến quản lý màu sẽ sử dụng để edit
     const [color, setColor] = useState(null)
-    // Biến lưu câu đang chỉnh sửa
+    // Biến lưu id câu đang chỉnh sửa
     const [editSentenceId, setEditSentenceId] = useState(null)
+    // Biến lưu id câu đang được click
+    const [clickedSentenceId, setClickedSentenceId] = useState([])
 
     const location = useLocation();
     const pageId = location.pathname.split("/").at(-2);
+
     useEffect(() => {
         const fetchData = async() => {
             const pageRes = await pdf_axios_instance.get(`/pages/${pageId}`)
@@ -134,11 +137,11 @@ const PageEdit = () => {
     // Hiển thị bounding box của các câu
     const handleShowBB = (sentenceInfo) => {
         // List id được click
-        let clickedSentenceId = sentenceInfo.reduce((clickedSentenceId, sentence) => {
+        let currentClickedSentenceId = sentenceInfo.reduce((currentClickedSentenceId, sentence) => {
             if (sentence.state){
-                clickedSentenceId.push(sentence.sentenceId)
+                currentClickedSentenceId.push(sentence.sentenceId)
             }
-            return clickedSentenceId
+            return currentClickedSentenceId
         }, []) 
         // List id và color tương ứng
         let idColorMapper = sentenceInfo.reduce((idColorMapper, sentence) => {
@@ -151,40 +154,29 @@ const PageEdit = () => {
         // Nếu chỉ có 1 sentence click => đang trong chế độ edit
         let tempEdit = true // Do edit và color chưa cập nhật ngay trong hàm này => sử dụng biến tạm
         let tempColor = null
-        if (clickedSentenceId.length === 1){
+        if (currentClickedSentenceId.length === 1){
             tempEdit = true
             tempColor = idColorMapper[0].color
             setEdit(true);
             setColor(idColorMapper[0].color);
-            setEditSentenceId(idColorMapper[0].id);
+            setEditSentenceId(currentClickedSentenceId[0])
         }
         else{
             tempEdit = false
             tempColor = null
             setEdit(false);
             setColor(null);
-            setEditSentenceId(null);
+            setEditSentenceId(null)
         }
-
-        // Lấy các sentence id được click trước đó
-        let previousSentenceClickedId = []
-        for (let i=0; i<displayRectangles.length; i++){
-            // Những bounding box mới được thêm chưa có sentenceId
-            if (displayRectangles[i].sentenceId===undefined){
-                continue
-            }
-            if (previousSentenceClickedId.includes(displayRectangles[i].sentenceId)){
-                continue
-            }
-            previousSentenceClickedId.push(displayRectangles[i].sentenceId)
-        }
+        console.log('clicked', clickedSentenceId)
+        setClickedSentenceId(currentClickedSentenceId);
 
         // Nếu không edit/Trạng thái trước đó đang click vào 2 sentence/chưa click vào sentence nào => Vẽ lại toàn bộ
-        if (!tempEdit || previousSentenceClickedId.length!=1){
+        if (!tempEdit || clickedSentenceId.length!=1){
             let tempInitialRectangle = []
             for(let i =0; i<sentenceBoundingBox.length; i++){
                 // Nếu sentenceId của bounding box nằm trong list id
-                if(clickedSentenceId.includes(sentenceBoundingBox[i].sentenceId)){
+                if(currentClickedSentenceId.includes(sentenceBoundingBox[i].sentenceId)){
                     // Trích xuất màu 
                     let color = idColorMapper.filter(idColor => {
                             if (idColor.id===sentenceBoundingBox[i].sentenceId){
@@ -257,6 +249,17 @@ const PageEdit = () => {
         toast.success("Thêm bounding box thành công", {position: toast.POSITION.TOP_CENTER});
     }
 
+    // Lưu câu mới tạo
+    const handleWriteSentence = (text, color) => {
+        const newSentence = {
+            sentenceId: 'new-'+uuidv4(),
+            text: text,
+            color: color,
+            state: false
+          };
+        setSentenceInfo([...sentenceInfo, newSentence])
+    }
+
     return (
         <div className='page-edit'>
             <div className='page-edit-header'>
@@ -278,6 +281,7 @@ const PageEdit = () => {
                     handleColor = {handleColor}
                     handleText = {handleText}
                     onDragEnd = {onDragEnd}
+                    handleWriteSentence = {handleWriteSentence}
                     edit = {edit}
                     editSentenceId = {editSentenceId}
                 />

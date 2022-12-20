@@ -1,16 +1,45 @@
 import React, { useState } from 'react';
 import './style.scss'
-import {BiSelectMultiple, BsPlusSquare, BsArrowClockwise, BsTrash, BsList} from 'react-icons/bs'
+import {GoPlus, GoTriangleDown, GoTriangleUp } from 'react-icons/go'
 import ReactDragListView from "react-drag-listview";
 import SentenceInfoItem from './SentenceInfoItem/SentenceInfoItem';
+import SentenceWrite from './SentenceWrite/SentenceWrite';
 
 const SentenceInfo = (props) => {
+    // Nút thu gọn thanh thêm câu
+    const [open, setOpen] = useState({
+        state: true,
+        icon: <GoTriangleUp/>
+    })
+    const handleToogleSearch = () => {
+        if(open.state){
+            setOpen({
+                state: false,
+                icon: <GoTriangleDown/>
+
+            })
+        }else{
+            setOpen({
+                state: true,
+                icon: <GoTriangleUp/>
+            })
+        }
+    }
+    let viewMode = {}
+    if(open.state){
+        viewMode.display = "flex"
+    }else{
+        viewMode.display = "none"
+    }
+
     return (
         <div className='sentence-info'>
             <div className='sentence-info-button'>
-                <button>
-                    <BsPlusSquare />
-                </button>        
+                <button title="Thêm câu mới" onClick={handleToogleSearch}>
+                    <GoPlus />
+                    {open.icon}
+                </button>
+                <SentenceWrite viewMode={viewMode} handleWriteSentence={props.handleWriteSentence} />     
             </div>
             <div className='sentence-info-list'>
                 <ReactDragListView

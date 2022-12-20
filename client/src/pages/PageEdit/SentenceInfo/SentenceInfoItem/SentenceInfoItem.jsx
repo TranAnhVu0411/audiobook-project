@@ -4,7 +4,6 @@ import {FaEdit, FaList, FaSave, FaWindowClose} from 'react-icons/fa'
 
 const SentenceInfoItem = (props) => {
     const [text, setText] = useState(props.sentence.text)
-    const [checked, setChecked] = useState(true)
     const sentence = props.sentence;
     const [editText, setEditText] = useState(false)
     let viewMode = {}
@@ -87,7 +86,7 @@ const SentenceInfoItem = (props) => {
                     >
                         <FaSave/>
                     </button>
-                    <button className="discard"onClick={() => {setEditText(false)}}><FaWindowClose/></button>
+                    <button className="discard" onClick={() => {setEditText(false)}}><FaWindowClose/></button>
                 </div>
             </div>
         </div>     
