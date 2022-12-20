@@ -4,15 +4,44 @@ import {FaEdit, FaList, FaSave, FaWindowClose} from 'react-icons/fa'
 
 const SentenceInfoItem = (props) => {
     const [text, setText] = useState(props.sentence.text)
+    const [checked, setChecked] = useState(true)
     const sentence = props.sentence;
-    const [editing, setEditing] = useState(false)
+    const [editText, setEditText] = useState(false)
     let viewMode = {}
     let editMode = {}
 
-    if (editing) {
+    if (editText) {
         viewMode.display = "none"
     } else {
         editMode.display = "none"
+    }
+
+    const handleCheckboxChange = (e) => {
+        // Nếu trong trạng thái edit
+        if (props.edit){
+            if(e.target.checked){
+                // Nếu checked vào sentence khác
+                if (window.confirm("Cảnh báo:\n"+
+                                "Các thay đổi bạn vừa thực hiện sẽ không được lưu vào bộ nhớ tạm nếu bạn thực hiện tác vụ này.\n"+
+                                "Bạn nên lưu các thay đổi trước khi thoát ra.\n"+
+                                "Bạn có muốn thực hiện tác vụ này không?")) {
+                    props.handleState(sentence.sentenceId)
+                }
+            }else{
+                // Nếu unchecked sentence
+                if (e.target.id===props.editSentenceId){
+                    // Nếu sentence unchecked là sentence đang edit
+                    if (window.confirm("Cảnh báo:\n"+
+                                "Các thay đổi bạn vừa thực hiện sẽ không được lưu vào bộ nhớ tạm nếu bạn thực hiện tác vụ này.\n"+
+                                "Bạn nên lưu các thay đổi trước khi thoát ra.\n"+
+                                "Bạn có muốn thực hiện tác vụ này không?")) {
+                        props.handleState(sentence.sentenceId)
+                    }
+                }
+            }
+        }else{
+            props.handleState(sentence.sentenceId)
+        }
     }
     
     return (
@@ -22,7 +51,7 @@ const SentenceInfoItem = (props) => {
                     type="checkbox" 
                     id={sentence.sentenceId}  
                     checked={sentence.state} 
-                    onChange={() => props.handleState(sentence.sentenceId)}/>
+                    onChange={handleCheckboxChange}/>
                 <input 
                     type="color" 
                     id={sentence.sentenceId}
@@ -46,19 +75,19 @@ const SentenceInfoItem = (props) => {
             <div className='sentence-info-box-button'>
                 <div style={viewMode}>
                     <button className="drag"><FaList/></button>
-                    <button className="edit" onClick={() => {setEditing(true)}}><FaEdit/></button>
+                    <button className="edit" onClick={() => {setEditText(true)}}><FaEdit/></button>
                 </div>
                 <div style={editMode}>
                     <button 
                         className="save" 
                         onClick={() => {
                             props.handleText(sentence.sentenceId, text)
-                            setEditing(false)
+                            setEditText(false)
                         }} 
                     >
                         <FaSave/>
                     </button>
-                    <button className="discard"onClick={() => {setEditing(false)}}><FaWindowClose/></button>
+                    <button className="discard"onClick={() => {setEditText(false)}}><FaWindowClose/></button>
                 </div>
             </div>
         </div>     

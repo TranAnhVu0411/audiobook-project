@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Stage, Layer } from 'react-konva';
 import {v4 as uuidv4} from "uuid";
-import { BsZoomIn, BsZoomOut, BsArrowClockwise } from "react-icons/bs"
+import { BiZoomIn, BiZoomOut, BiSave } from "react-icons/bi"
 import './style.scss'
 import Rectangle from './Rectangle';
 import PageImage from './PageImage';
@@ -10,11 +10,11 @@ const SCALEBY = 1.02
 
 const PageCanvas = (props) => {
     // Các bounding box được khởi tạo trước
-    const [rectangles, setRectangles] = React.useState(props.initialRectangles);
+    const [rectangles, setRectangles] = React.useState([]);
     useEffect(() => {
-        setRectangles(props.initialRectangles)
+        setRectangles(props.displayRectangles)
         setNewRectangle([])
-    }, [props.initialRectangles])
+    }, [props.displayRectangles])
     
     // Id bounding box được chọn
     const [selectedId, selectShape] = React.useState(null);
@@ -39,7 +39,7 @@ const PageCanvas = (props) => {
                 if (selectedId === null && newRectangle.length === 0){
                     const { x, y } = e.target.getStage().getRelativePointerPosition();
                     const id = uuidv4();
-                    setNewRectangle([{ x, y, width: 0, height: 0, stroke: 'blue', strokeWidth: 2, id: id }]);
+                    setNewRectangle([{ x, y, width: 0, height: 0, stroke: props.color, strokeWidth: 2, id: id }]);
                 }
             }
         }
@@ -58,7 +58,7 @@ const PageCanvas = (props) => {
                 width: x - sx,
                 height: y - sy,
                 id: id, 
-                stroke: 'blue', 
+                stroke: props.color, 
                 strokeWidth: 2
                 };
                 if (rectangleToAdd.width===0 || rectangleToAdd.height===0){
@@ -67,6 +67,7 @@ const PageCanvas = (props) => {
                     rectangles.push(rectangleToAdd);
                     setNewRectangle([]);
                     setRectangles(rectangles);
+                    props.setDisplayRectangles(rectangles)
                 }
             }
         }
@@ -86,7 +87,7 @@ const PageCanvas = (props) => {
                     width: x - sx,
                     height: y - sy,
                     id: id, 
-                    stroke: 'blue', 
+                    stroke: props.color, 
                     strokeWidth: 2
                 }
                 ]);
@@ -95,9 +96,7 @@ const PageCanvas = (props) => {
     };
 
     const handleMouseEnter = e => {
-        if (props.edit){
-            e.target.getStage().container().style.cursor = "crosshair";
-        }
+        e.target.getStage().container().style.cursor = "crosshair";
     };
 
     const handleKeyDown = e => {
@@ -116,13 +115,11 @@ const PageCanvas = (props) => {
 
     const handleRefresh = () => {
         // Các bounding box được khởi tạo trước
-        setRectangles(props.initialRectangles);
+        setRectangles();
         setNewRectangle([])
     }
-    console.log('edit', props.edit)
 
     const rectangleToDraw = [...rectangles, ...newRectangle];
-    // console.log(rectangleToDraw[0])
 
     return (
         <div className='page-canvas'>
@@ -134,7 +131,7 @@ const PageCanvas = (props) => {
                         let newCanvasMeasures = {width: canvasMeasures.width*SCALEBY, height: canvasMeasures.height*SCALEBY}
                         setCanvasMeasures(newCanvasMeasures)
                     }}>
-                        <BsZoomIn/>
+                        <BiZoomIn/>
                     </button>
                     <button
                     title="Thu nhỏ" 
@@ -143,10 +140,10 @@ const PageCanvas = (props) => {
                         let newCanvasMeasures = {width: canvasMeasures.width/SCALEBY, height: canvasMeasures.height/SCALEBY}
                         setCanvasMeasures(newCanvasMeasures)
                     }}>
-                        <BsZoomOut/>
+                        <BiZoomOut/>
                     </button>
-                    <button title="Reset về trạng thái ban đầu" onClick={handleRefresh}>
-                        <BsArrowClockwise/>
+                    <button title="Lưu bounding box" onClick={props.saveBoundingBox} style={{display: props.edit?"flex":"none"}}>
+                        <BiSave/>
                     </button>
             </div>
             <div className='canvas' tabIndex={1} onKeyDown={handleKeyDown}>

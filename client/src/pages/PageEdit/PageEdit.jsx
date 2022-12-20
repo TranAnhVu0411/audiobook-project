@@ -6,6 +6,8 @@ import {v4 as uuidv4} from "uuid";
 import PageCanvas from './PageCanvas/PageCanvas';
 import RandomColor from 'randomcolor'
 import SentenceInfo from './SentenceInfo/SentenceInfo'
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const PageEdit = () => {
     // url của ảnh
@@ -44,12 +46,14 @@ const PageEdit = () => {
     //     sentenceId: ,
     //     stroke: ,
     // }
-    let [initialRectangles, setInitialRectangles] = useState([])
+    let [displayRectangles, setDisplayRectangles] = useState([])
 
     // Biến quản lý việc edit trong canvas
     const [edit, setEdit] = useState(false)
-    // Biến quản lý màu sẽ sử dụng
+    // Biến quản lý màu sẽ sử dụng để edit
     const [color, setColor] = useState(null)
+    // Biến lưu câu đang chỉnh sửa
+    const [editSentenceId, setEditSentenceId] = useState(null)
 
     const location = useLocation();
     const pageId = location.pathname.split("/").at(-2);
@@ -144,32 +148,62 @@ const PageEdit = () => {
             return idColorMapper
         }, []) 
 
-        let tempInitialRectangle = []
-        for(let i =0; i<sentenceBoundingBox.length; i++){
-            // Nếu sentenceId của bounding box nằm trong list id
-            if(clickedSentenceId.includes(sentenceBoundingBox[i].sentenceId)){
-                // Trích xuất màu 
-                let color = idColorMapper.filter(idColor => {
-                        if (idColor.id===sentenceBoundingBox[i].sentenceId){
-                            return idColor.color
-                        }
-                    }
-                )[0].color
-                tempInitialRectangle.push({
-                        ...sentenceBoundingBox[i], 
-                        stroke: color
-                    })
-                }
-            }
-        setInitialRectangles(tempInitialRectangle)
-
+        // Nếu chỉ có 1 sentence click => đang trong chế độ edit
+        let tempEdit = true // Do edit và color chưa cập nhật ngay trong hàm này => sử dụng biến tạm
+        let tempColor = null
         if (clickedSentenceId.length === 1){
+            tempEdit = true
+            tempColor = idColorMapper[0].color
             setEdit(true);
             setColor(idColorMapper[0].color);
+            setEditSentenceId(idColorMapper[0].id);
         }
         else{
+            tempEdit = false
+            tempColor = null
             setEdit(false);
             setColor(null);
+            setEditSentenceId(null);
+        }
+
+        // Lấy các sentence id được click trước đó
+        let previousSentenceClickedId = []
+        for (let i=0; i<displayRectangles.length; i++){
+            // Những bounding box mới được thêm chưa có sentenceId
+            if (displayRectangles[i].sentenceId===undefined){
+                continue
+            }
+            if (previousSentenceClickedId.includes(displayRectangles[i].sentenceId)){
+                continue
+            }
+            previousSentenceClickedId.push(displayRectangles[i].sentenceId)
+        }
+
+        // Nếu không edit/Trạng thái trước đó đang click vào 2 sentence/chưa click vào sentence nào => Vẽ lại toàn bộ
+        if (!tempEdit || previousSentenceClickedId.length!=1){
+            let tempInitialRectangle = []
+            for(let i =0; i<sentenceBoundingBox.length; i++){
+                // Nếu sentenceId của bounding box nằm trong list id
+                if(clickedSentenceId.includes(sentenceBoundingBox[i].sentenceId)){
+                    // Trích xuất màu 
+                    let color = idColorMapper.filter(idColor => {
+                            if (idColor.id===sentenceBoundingBox[i].sentenceId){
+                                return idColor.color
+                            }
+                        }
+                    )[0].color
+                    tempInitialRectangle.push({
+                            ...sentenceBoundingBox[i], 
+                            stroke: color
+                        })
+                    }
+                }
+            setDisplayRectangles(tempInitialRectangle)
+        }
+        // Nếu những điều trên không thoả mãn => đổi màu bounding box
+        else{
+            let tempInitialRectangle = displayRectangles.map(rect => {return {...rect, stroke: tempColor}})
+            setDisplayRectangles(tempInitialRectangle)
         }
     }
 
@@ -204,7 +238,24 @@ const PageEdit = () => {
         return setSentenceInfo(list);
     };
 
-    console.log(sentenceInfo)
+    // Lưu bounding box mới tạo
+    const saveBoundingBox = () => {
+        let tempSentenceBB = [];
+        for(let i = 0; i < sentenceBoundingBox.length; i++) {
+            if (sentenceBoundingBox[i].sentenceId !== editSentenceId){
+                tempSentenceBB.push(sentenceBoundingBox[i])
+            }
+        }
+        for(let i = 0; i<displayRectangles.length; i++){
+            if (displayRectangles[i].sentenceId!==undefined){
+                tempSentenceBB.push(displayRectangles[i])
+            }else{
+                tempSentenceBB.push({...displayRectangles[i], sentenceId: editSentenceId})
+            }
+        }
+        setSentenceBoundingBox(tempSentenceBB)
+        toast.success("Thêm bounding box thành công", {position: toast.POSITION.TOP_CENTER});
+    }
 
     return (
         <div className='page-edit'>
@@ -214,10 +265,12 @@ const PageEdit = () => {
             </div>
             <div className='page-edit-section'>
                 <PageCanvas 
-                    initialRectangles = {initialRectangles} 
+                    displayRectangles = {displayRectangles} 
+                    setDisplayRectangles = {setDisplayRectangles}
                     imageUrl={imageUrl}
                     color={color}
                     edit={edit}
+                    saveBoundingBox={saveBoundingBox}
                 />
                 <SentenceInfo 
                     sentenceInfo = {sentenceInfo} 
@@ -225,6 +278,8 @@ const PageEdit = () => {
                     handleColor = {handleColor}
                     handleText = {handleText}
                     onDragEnd = {onDragEnd}
+                    edit = {edit}
+                    editSentenceId = {editSentenceId}
                 />
             </div>
             <div className='page-edit-submit'>

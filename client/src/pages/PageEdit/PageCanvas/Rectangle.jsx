@@ -18,7 +18,9 @@ const Rectangle = ({ shapeProps, isSelected, onSelect, onChange, canvasMeasures,
   }, [isSelected]);
 
   const onMouseEnter = e => {
-    e.target.getStage().container().style.cursor = "move";
+    if(edit){
+      e.target.getStage().container().style.cursor = "move";
+    }
   };
 
   const onMouseLeave = e => {

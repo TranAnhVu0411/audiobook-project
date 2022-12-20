@@ -28,7 +28,9 @@ const SentenceInfo = (props) => {
                             sentence={sentence} 
                             handleState={props.handleState} 
                             handleColor={props.handleColor}
-                            handleText={props.handleText} 
+                            handleText={props.handleText}
+                            edit={props.edit} 
+                            editSentenceId = {props.editSentenceId}
                         />
                     )           
                 })}
