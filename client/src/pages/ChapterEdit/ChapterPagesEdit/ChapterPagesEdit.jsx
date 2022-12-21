@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 // import { AiOutlineEdit, AiOutlineSave, AiOutlineClose } from "react-icons/ai"
 // import {pdf_axios_instance} from '../../../service/custom-axios';
 import './style.scss';
@@ -9,9 +9,12 @@ import PageWrite from "./PageWrite/PageWrite"
 import ImageViewer from "react-simple-image-viewer";
 
 const ChapterPagesEdit = (props) => {
-    // const [originalPageList, setOriginalPageList] = useState(props.chapterPages) // Page List gốc
-    const [pageList, setPageList] = useState(props.chapterPages) // Page List chỉnh sửa
+    const [pageList, setPageList] = useState([]) // Page List chỉnh sửa
     const [deletePageList, setDeletePageList] = useState([]) // Danh sách các Page sẽ bị xoá
+
+    useEffect(() => {
+        setPageList(props.chapterPages)
+    }, [props.chapterPages]) 
 
     // Xoá ảnh
     const deletePage = (id) => {
@@ -54,11 +57,24 @@ const ChapterPagesEdit = (props) => {
         return setPageList(list);
     };
 
+    const handleReset = () => {
+        setPageList(props.chapterPages)
+        setDeletePageList([])
+    }
+
     return (
         <div className="chapter-pages-edit">
-            <h2>Danh sách trang</h2>
+            <div className='chapter-pages-edit-header'>
+                <h2>Danh sách trang</h2>
+                <button onClick={handleReset}>
+                    Hoàn tác
+                </button>
+                <button onClick={() => props.handleChapterPages(pageList, deletePageList)}>
+                    Lưu thay đổi
+                </button>
+            </div>
             <PageList pageList={pageList} deletePage={deletePage} openImageViewer={openImageViewer} onDragEnd={onDragEnd}/>
-            <PageWrite />
+            <PageWrite handlePageImageWrite={props.handlePageImageWrite}/>
             {isViewerOpen ? 
                 <ImageViewer 
                     src={[clickImg]}

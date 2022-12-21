@@ -51,7 +51,7 @@ const PageWrite = (props) => {
                     </TabList>
 
                     <TabPanel>
-                        <PageImageWrite />
+                        <PageImageWrite handlePageImageWrite={props.handlePageImageWrite}/>
                     </TabPanel>
                     <TabPanel>
                         <PagePDFWrite />

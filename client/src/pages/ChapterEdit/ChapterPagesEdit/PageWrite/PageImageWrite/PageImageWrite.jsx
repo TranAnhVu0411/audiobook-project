@@ -24,7 +24,6 @@ const PageImageWrite = (props) => {
             file: null,
             url: null
         })
-        
     };
 
     // Preview 
@@ -53,7 +52,7 @@ const PageImageWrite = (props) => {
                 <input type="file" name="image" id="image" accept="image/png, image/jpg, image/jpeg" onChange={handlePreviewImage} ref={fileInput}/>
             </div>
             <div className='page-image-write-submit'>
-                <button>
+                <button onClick={() => {props.handlePageImageWrite(image.file)}}>
                     Lưu trang
                 </button>
             </div>
