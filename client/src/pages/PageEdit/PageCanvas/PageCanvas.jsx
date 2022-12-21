@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef, useLayoutEffect } from 'react';
 import { Stage, Layer } from 'react-konva';
 import {v4 as uuidv4} from "uuid";
 import { BiZoomIn, BiZoomOut, BiSave } from "react-icons/bi"
@@ -9,13 +9,6 @@ import PageImage from './PageImage';
 const SCALEBY = 1.02
 
 const PageCanvas = (props) => {
-    // Các bounding box được khởi tạo trước
-    const [rectangles, setRectangles] = React.useState([]);
-    useEffect(() => {
-        setRectangles(props.displayRectangles)
-        setNewRectangle([])
-    }, [props.displayRectangles])
-    
     // Id bounding box được chọn
     const [selectedId, selectShape] = React.useState(null);
     // Kích thước canvas
@@ -28,7 +21,16 @@ const PageCanvas = (props) => {
         height: window.innerHeight
     });
     // Phục vụ cho phóng to/thu nhỏ
-    const [stageScale, setStageScale] = useState(1.)
+    const divCanvas = useRef(null)
+    const [divCanvasWidth, setDivCanvasWidth] = useState(window.innerWidth)
+    useLayoutEffect(() => {
+        console.log(divCanvas.current.offsetWidth)
+        console.log(originalMeasures.width)
+        setDivCanvasWidth(divCanvas.current.offsetWidth);
+      }, []);
+    const [stageScale, setStageScale] = useState(divCanvasWidth/originalMeasures.width)
+    // const [stageScale, setStageScale] = useState(3/4)
+    // console.log(originalMeasures.width)
 
     // Sử dụng để vẽ hình mới
     const [newRectangle, setNewRectangle] = useState([]);
@@ -64,10 +66,9 @@ const PageCanvas = (props) => {
                 if (rectangleToAdd.width===0 || rectangleToAdd.height===0){
                     setNewRectangle([]);
                 }else{
-                    rectangles.push(rectangleToAdd);
+                    let newRectList = [...props.displayRectangles, rectangleToAdd];
                     setNewRectangle([]);
-                    setRectangles(rectangles);
-                    props.setDisplayRectangles(rectangles)
+                    props.setDisplayRectangles(newRectList)
                 }
             }
         }
@@ -104,22 +105,16 @@ const PageCanvas = (props) => {
         if (props.edit){
             if (e.keyCode === 8 || e.keyCode === 46) {
                 if (selectedId !== null) {
-                const newRectangles = rectangles.filter(
+                const newRectangles = props.displayRectangles.filter(
                     rectangle => rectangle.id !== selectedId
                 );
-                setRectangles(newRectangles);
+                props.setDisplayRectangles(newRectangles);
                 }
             }
         }
     };
 
-    const handleRefresh = () => {
-        // Các bounding box được khởi tạo trước
-        setRectangles();
-        setNewRectangle([])
-    }
-
-    const rectangleToDraw = [...rectangles, ...newRectangle];
+    const rectangleToDraw = [...props.displayRectangles, ...newRectangle];
 
     return (
         <div className='page-canvas'>
@@ -146,7 +141,7 @@ const PageCanvas = (props) => {
                         <BiSave/>
                     </button>
             </div>
-            <div className='canvas' tabIndex={1} onKeyDown={handleKeyDown}>
+            <div className='canvas' tabIndex={1} onKeyDown={handleKeyDown} ref={divCanvas}>
                 <Stage 
                     scaleX={stageScale}
                     scaleY={stageScale}
@@ -161,6 +156,8 @@ const PageCanvas = (props) => {
                         <PageImage
                             setCanvasMeasures={setCanvasMeasures}
                             setOriginalMeasures={setOriginalMeasures}
+                            divCanvasWidth={divCanvasWidth}
+                            setStageScale={setStageScale}
                             imageUrl={props.imageUrl}
                             onMouseDown={() => {
                                 // deselect when clicked on empty area
@@ -182,11 +179,11 @@ const PageCanvas = (props) => {
                                     selectShape(rect.id);
                                 }}
                                 onChange={(newAttrs) => {
-                                    const rects = rectangles.slice();
+                                    const rects = props.displayRectangles.slice();
                                     let temp = newAttrs
                                     temp.sentenceId = sentenceId;
                                     rects[i] = newAttrs;
-                                    setRectangles(rects);
+                                    props.setDisplayRectangles(rects);
                                 }}
                                 canvasMeasures = {canvasMeasures}
                                 originalMeasures={originalMeasures}

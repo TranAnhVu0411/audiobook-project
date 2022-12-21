@@ -5,6 +5,8 @@ const PageImage = ({
   imageUrl,
   setCanvasMeasures,
   setOriginalMeasures,
+  setStageScale,
+  divCanvasWidth,
   onMouseDown,
   onMouseUp,
   onMouseMove
@@ -24,6 +26,7 @@ const PageImage = ({
         width: imageToLoad.width,
         height: imageToLoad.height
       });
+      setStageScale(divCanvasWidth/imageToLoad.width);
     });
 
     return () => imageToLoad.removeEventListener("load", null);
