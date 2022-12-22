@@ -83,8 +83,13 @@
                 cursor: pointer;
                 font-size: 20px;
             }
+            .chapter-item-button{
+                display: flex;
+                flex-direction: row;
+                gap: 5px;
+            }
         }
-        div{
+        .pdf-write-submit{
             button{
                 border: none;
                 border-radius: 10px;

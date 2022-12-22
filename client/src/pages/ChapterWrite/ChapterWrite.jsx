@@ -14,29 +14,26 @@ import axios from 'axios';
 const ChapterWrite = () => {
     const location = useLocation();
     const [book, setBook] = useState({});
+    const [numChapter, setNumChapter] = useState(0);
     const [isLoad, setIsLoad] = useState(false);
     const [isUpload, setIsUpload] = useState(true);
     const bookId = location.pathname.split("/")[3];
 
-    const [chapterTextInput, setChapterTextInput] = useState({
-        index: "",
-        name: "",
-    })
+    const [chapterName, setChapterName] = useState("")
     const [chapterImgs, setChapterImgs] = useState([])
 
     const resetInput = () => {
-        setChapterTextInput({
-            index: "",
-            name: "",
-        });
+        setChapterName("");
         setChapterImgs([]);
     };
 
     useEffect(() => {
         const fetchData = async () => {
           try {
-            const res = await main_axios_instance.get(`/book/${bookId}`);
-            setBook(res.data);
+            const bookRes = await main_axios_instance.get(`/book/${bookId}`);
+            setBook(bookRes.data);
+            const chaptersRes = await pdf_axios_instance.get(`/books/${bookId}`);
+            setNumChapter(chaptersRes.data.length);
             setIsLoad(true);
           } catch (err) {
             console.log(err);
@@ -45,9 +42,6 @@ const ChapterWrite = () => {
         fetchData();
     }, [bookId]);
 
-    const handleChapterTextInput = e => {
-        setChapterTextInput(prev => ({...prev, [e.target.name]: e.target.value}))
-    }
     const handlePreviewImages = (e) => {
         for (let i = 0; i < e.target.files.length; i++){
             let newImage = {
@@ -114,8 +108,8 @@ const ChapterWrite = () => {
             let chapterForm = new FormData();
 
             // Thêm chương mới vào database
-            chapterForm.append("index", chapterTextInput.index)
-            chapterForm.append("name", chapterTextInput.name)
+            chapterForm.append("index", numChapter+1)
+            chapterForm.append("name", chapterName)
             chapterForm.append("bookId", bookId)
             const resChapter = await pdf_axios_instance.post('/chapters', chapterForm)
             console.log(resChapter)
@@ -202,17 +196,14 @@ const ChapterWrite = () => {
                         <span>Tiêu đề sách: {book.title}</span>
                         <hr></hr>
                     </div>
-                    <div className="text-input">
-                        <label>Chương số</label>
-                        <input type="number" name="index" value={chapterTextInput.index} onChange={handleChapterTextInput} min="0" placeholder="Nhập số chương"/>
-                    </div>
+                    <small>*Chương mới thêm sẽ nằm ở vị trí cuối cùng trong danh sách chương của sách</small>
                     <div className="text-input">
                         <label>Tiêu đề chương</label>
-                        <input type="text" name="name" value={chapterTextInput.name} onChange={handleChapterTextInput} placeholder="Nhập tên chương"/>
+                        <input type="text" name="name" value={chapterName} onChange={e => {setChapterName(e.target.value)}} placeholder="Nhập tên chương"/>
                     </div>
                 </div>     
                 <div className="file-input">
-                    <h2>Upload</h2>
+                    <h2>Upload Ảnh</h2>
                     <div className='file-input-button'>
                         <input 
                             type="file" 

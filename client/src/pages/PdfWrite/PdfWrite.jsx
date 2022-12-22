@@ -3,12 +3,14 @@ import {main_axios_instance, pdf_axios_instance} from '../../service/custom-axio
 import {useLocation} from "react-router-dom";
 import {v4 as uuidv4} from "uuid";
 import LoadingScreen from "../../components/LoadingScreen/LoadingScreen";
-import { FaRegEdit, FaTrash } from "react-icons/fa";
+import { FaRegEdit, FaTrash, FaList } from "react-icons/fa";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import './style.scss';
 import 'react-tabs/style/react-tabs.css';
 import ReactTooltip from 'react-tooltip';
+import ReactDragListView from "react-drag-listview";
+import axios from "axios";
 
 const PdfWrite = () => {
     const location = useLocation();
@@ -20,11 +22,11 @@ const PdfWrite = () => {
 
     const [chapterForm, setChapterForm] = useState({
         id: "",
-        index: "",
         name: "",
         from: "",
         to: "",
     })
+    // mode hiện tại (Chỉnh sửa, thêm) và id của dòng đang chỉnh sửa
     const [mode, setMode] = useState({state: 'submit', id: ""})
     const [chapterList, setChapterList] = useState([])
     const [chapterPDF, setChapterPDF] = useState(null)
@@ -53,6 +55,7 @@ const PdfWrite = () => {
         }
     }
 
+    // Reset các trường trong form
     const resetChapterForm = () => {
         setChapterForm({
             id: "",
@@ -63,6 +66,7 @@ const PdfWrite = () => {
         })
     }
 
+    // Hiển thị dữ liệu edit trên form
     const handleShowEdit = (id) => {
         let editChapter = {}
         for (let i =0; i<chapterList.length; i++){
@@ -81,19 +85,24 @@ const PdfWrite = () => {
         setMode({state: 'edit', id: id})
     }
 
+    // Huỷ edit
     const handleDestroyEdit = () => {
         resetChapterForm()
         setMode({state: 'submit', id: ""})
     }
 
+    // Xoá chapter trên table
     const handleDeleteItem = (id) => {
-        setChapterList([
-            ...chapterList.filter(chapter => {
-              return chapter.id !== id;
-            }),
-          ])
+        if (mode.state!=='edit'){
+            setChapterList([
+                ...chapterList.filter(chapter => {
+                  return chapter.id !== id;
+                }),
+            ])
+        }
     }
 
+    // Submit chapter và hiển thị trên table
     const handleSubmitItem = (e) => {
         if (mode.state === "submit"){
             let newChapter = {
@@ -120,6 +129,23 @@ const PdfWrite = () => {
         setMode({state: 'submit', id: ""})
     }
 
+    // Hỗ trợ thay đổi thứ tự chapter
+    const reorder = (list, startIndex, endIndex) => {
+        const result = Array.from(list);
+        const [removed] = result.splice(startIndex, 1);
+        result.splice(endIndex, 0, removed);
+        return result;
+    };
+
+    const onDragEnd = (fromIndex, toIndex) => {
+        /* IGNORES DRAG IF OUTSIDE DESIGNATED AREA */
+        if (toIndex < 0) return;
+    
+        const list = reorder(chapterList, fromIndex, toIndex);
+        return setChapterList(list);
+    };
+
+    // Submit toàn bộ
     const handleSubmit = async(e) => {
         setIsUpload(false)
         e.preventDefault();
@@ -129,12 +155,15 @@ const PdfWrite = () => {
                 throw "empty pdf"
             }
 
+            // Lấy presigned url
             let urlForm = new FormData();
+            urlForm.append('upload-type', 'PUT')
             urlForm.append('type', 'book');
             urlForm.append('id', bookId)
             urlForm.append('data-type', 'pdf')
-            const resUrl = await pdf_axios_instance.post('/url', urlForm)
+            const resUrl = await pdf_axios_instance.post('/urls', urlForm)
             console.log(resUrl)
+            // Upload pdf lên cloud
             var pdfHeaders = new Headers();
             pdfHeaders.append("Content-Type", chapterPDF.type);
             await fetch(resUrl.data.url, {
@@ -143,18 +172,30 @@ const PdfWrite = () => {
                 body: chapterPDF,
                 redirect: 'follow'
             })
-
+            // Tạo mới chapter
+            let chapterRequestsList = []
             for (let i = 0; i <chapterList.length; i++) {
                 let chapterForm = new FormData();
-                chapterForm.append("index", chapterList[i].index)
+                chapterForm.append("index", i+1)
                 chapterForm.append("name", chapterList[i].name)
                 chapterForm.append("bookId", bookId)
-                chapterForm.append("status", "notready")
                 chapterForm.append("from", chapterList[i].from)
                 chapterForm.append("to", chapterList[i].to)
-                const resChapter = await pdf_axios_instance.post('/chapters', chapterForm)
-                console.log(resChapter)
+                chapterRequestsList.push(pdf_axios_instance.post('/chapters', chapterForm))
             }
+            let chapterResponsesList = await axios.all(chapterRequestsList)
+            console.log(chapterResponsesList)
+
+            let chapterMetadataList = []
+            for (let i = 0; i < chapterResponsesList.length; i++) {
+                chapterMetadataList.push(chapterResponsesList[i].data)
+            }
+            let preprocessForm = new FormData();
+            preprocessForm.append('chapterList', JSON.stringify(chapterMetadataList))
+            preprocessForm.append('bookId', bookId)
+            const preprocessRes = await pdf_axios_instance.post('/preprocess/book', preprocessForm)
+            console.log(preprocessRes)
+
             setIsUpload(true);
             toast.success("Upload pdf thành công, đang xử lý", {position: toast.POSITION.TOP_CENTER});
         }catch(err){
@@ -183,10 +224,6 @@ const PdfWrite = () => {
                         <input type='file' name="chapterPDF" id="chapterPDF" accept="application/pdf" onChange={handlePDF}/>
                     </div>
                     <div className="text-input">
-                        <label>Chương số</label>
-                        <input type="number" name="index" value={chapterForm.index} min={1} onChange={handleChapterForm} placeholder="Nhập số chương"/>
-                    </div>
-                    <div className="text-input">
                         <label>Tiêu đề chương</label>
                         <input type="text" name="name" value={chapterForm.name} onChange={handleChapterForm} placeholder="Nhập tên chương"/>
                     </div>
@@ -211,57 +248,62 @@ const PdfWrite = () => {
                         )}
                     </div>
                 </div>    
-                <div className="chapter-table">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th style={{width:"10%"}}>Số chương</th>
-                                <th style={{width:"60%"}}>Tên chương</th>
-                                <th style={{width:"10%"}}>Trang bắt đầu</th>
-                                <th style={{width:"10%"}}>Trang kết thúc</th>
-                                <th style={{width:"10%"}} colSpan={2}>&nbsp;</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {chapterList.map(chapter => {
-                               return(
-                               <tr key={chapter.id} className={`${mode.state==='edit' && mode.id===chapter.id ? "updating" : ""}`}>
-                                    <td>{chapter.index}</td>
-                                    <td>{chapter.name}</td>
-                                    <td>{chapter.from}</td>
-                                    <td>{chapter.to}</td>
-                                    <td>
-                                        <button onClick={() => handleShowEdit(chapter.id)}>
-                                            <FaRegEdit/>
-                                        </button>
-                                    </td>
-                                    <td>
-                                        {mode.state==='edit' && mode.id===chapter.id ? (
-                                            <>
-                                                <button data-tip data-for="rating-tooltip">
+                <ReactDragListView
+                    lineClassName="dragLine"
+                    handleSelector='button.chapter-dragger'
+                    nodeSelector={`${mode.state==='edit' ? "" : "tr"}`}
+                    onDragEnd={(fromIndex, toIndex) =>
+                        onDragEnd(fromIndex, toIndex)
+                    }
+                >
+                    <div className="chapter-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style={{width:"5%"}}>&nbsp;</th>
+                                    <th style={{width:"55%"}}>Tên chương</th>
+                                    <th style={{width:"15%"}}>Trang bắt đầu</th>
+                                    <th style={{width:"15%"}}>Trang kết thúc</th>
+                                    <th style={{width:"10%"}}>&nbsp;</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {chapterList.map(chapter => {
+                                return(
+                                <tr 
+                                    key={chapter.id} 
+                                    className={`${(mode.state==='edit' && mode.id===chapter.id) ? "updating" : ""}`}    
+                                >
+                                        <td>
+                                            <button className="chapter-dragger" style={{cursor:`${mode.state==='edit'?"not-allowed":"all-scroll"}`}}>
+                                                <FaList/>
+                                            </button>
+                                        </td>
+                                        <td>{chapter.name}</td>
+                                        <td>{chapter.from}</td>
+                                        <td>{chapter.to}</td>
+                                        <td>
+                                            <div className="chapter-item-button">
+                                                <button onClick={() => handleShowEdit(chapter.id)}>
+                                                    <FaRegEdit/>
+                                                </button>
+                                                <button onClick={() => handleDeleteItem(chapter.id)} style={{cursor:`${mode.state==='edit'?"not-allowed":"pointer"}`}}>
                                                     <FaTrash/>
                                                 </button>
-                                                <ReactTooltip id='rating-tooltip' effect="solid">
-                                                    <span>Bạn không thể xoá khi đang sửa bản ghi</span>
-                                                </ReactTooltip>
-                                            </>
-                                        ) : (
-                                            <button onClick={() => handleDeleteItem(chapter.id)}>
-                                                <FaTrash/>
-                                            </button>
-                                        )}   
-                                    </td>
-                                </tr>
-                               )
-                            })}
-                        </tbody>
-                    </table>
-                    <div>
-                        <button onClick={handleSubmit}>
-                            Lưu thay đổi
-                        </button>
-                    </div>
-                </div> 
+                                            </div>
+                                        </td>
+                                    </tr>
+                                )
+                                })}
+                            </tbody>
+                        </table>
+                        <div className="pdf-write-submit">
+                            <button onClick={handleSubmit}>
+                                Lưu thay đổi
+                            </button>
+                        </div>
+                    </div> 
+                </ReactDragListView>
             </div>
         )
     }else{
