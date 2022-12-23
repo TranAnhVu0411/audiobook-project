@@ -125,16 +125,6 @@ const ChapterWrite = () => {
             let pageResponsesList = await axios.all(pageRequestsList)
             console.log(pageResponsesList)
 
-            // Cập nhật lại list pages cho chapter mới tạo ra
-            let chapterAddRequestsList = []
-            for (let i = 0; i<pageResponsesList.length; i++){
-                let chapterAddForm = new FormData();
-                chapterAddForm.append('pageId', pageResponsesList[i].data.pageId)
-                chapterAddRequestsList.push(pdf_axios_instance.put(`/chapters/${resChapter.data.chapterId}`, chapterAddForm))
-            }
-            let chapterAddResponsesList = await axios.all(chapterAddRequestsList)
-            console.log(chapterAddResponsesList)
-
             // Tạo Presigned URL
             let urlRequestsList = []
             for (let i = 0; i<chapterImgs.length; i++) {
