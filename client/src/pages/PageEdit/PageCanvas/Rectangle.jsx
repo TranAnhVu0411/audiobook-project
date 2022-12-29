@@ -1,7 +1,7 @@
 import React from 'react';
 import { Rect, Transformer } from 'react-konva';
 
-const Rectangle = ({ shapeProps, isSelected, onSelect, onChange, canvasMeasures, originalMeasures, edit }) => {
+const Rectangle = ({ shapeProps, isSelected, onSelect, onChange, canvasMeasures, originalMeasures, edit, color, type }) => {
   const shapeRef = React.useRef();
   const trRef = React.useRef();
 
@@ -34,7 +34,9 @@ const Rectangle = ({ shapeProps, isSelected, onSelect, onChange, canvasMeasures,
         onTap={onSelect}
         ref={shapeRef}
         {...shapeProps}
-        strokeWidth={2}
+        strokeWidth={type==='boundingbox'? 2:0}
+        stroke={color}
+        fill={type==='boundingbox'?null:color}
         draggable={edit}
         strokeScaleEnabled={false}
         onMouseEnter={onMouseEnter}

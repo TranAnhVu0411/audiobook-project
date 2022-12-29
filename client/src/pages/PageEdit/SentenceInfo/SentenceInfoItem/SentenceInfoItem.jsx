@@ -14,34 +14,6 @@ const SentenceInfoItem = (props) => {
     } else {
         editMode.display = "none"
     }
-
-    const handleCheckboxChange = (e) => {
-        // Nếu trong trạng thái edit
-        if (props.edit){
-            if(e.target.checked){
-                // Nếu checked vào sentence khác
-                if (window.confirm("Cảnh báo:\n"+
-                                "Các thay đổi bạn vừa thực hiện sẽ không được lưu vào bộ nhớ tạm nếu bạn thực hiện tác vụ này.\n"+
-                                "Bạn nên lưu các thay đổi trước khi thoát ra.\n"+
-                                "Bạn có muốn thực hiện tác vụ này không?")) {
-                    props.handleState(sentence.sentenceId)
-                }
-            }else{
-                // Nếu unchecked sentence
-                if (e.target.id===props.editSentenceId){
-                    // Nếu sentence unchecked là sentence đang edit
-                    if (window.confirm("Cảnh báo:\n"+
-                                "Các thay đổi bạn vừa thực hiện sẽ không được lưu vào bộ nhớ tạm nếu bạn thực hiện tác vụ này.\n"+
-                                "Bạn nên lưu các thay đổi trước khi thoát ra.\n"+
-                                "Bạn có muốn thực hiện tác vụ này không?")) {
-                        props.handleState(sentence.sentenceId)
-                    }
-                }
-            }
-        }else{
-            props.handleState(sentence.sentenceId)
-        }
-    }
     
     return (
         <div className='sentence-info-box'>
@@ -50,13 +22,8 @@ const SentenceInfoItem = (props) => {
                     type="checkbox" 
                     id={sentence.sentenceId}  
                     checked={sentence.state} 
-                    onChange={handleCheckboxChange}/>
-                <input 
-                    type="color" 
-                    id={sentence.sentenceId}
-                    name="color" 
-                    value={sentence.color} 
-                    onChange={(e) => {props.handleColor(sentence.sentenceId, e.target.value)}}
+                    onChange={() => props.handleState(sentence.sentenceId)}
+                    disabled={props.editState?true:false}
                 />
             </div>
             <div className='sentence-info-box-text'>
@@ -73,8 +40,8 @@ const SentenceInfoItem = (props) => {
             </div>
             <div className='sentence-info-box-button'>
                 <div style={viewMode}>
-                    <button className="drag"><FaList/></button>
-                    <button className="edit" onClick={() => {setEditText(true)}}><FaEdit/></button>
+                    <button className="drag" disabled={props.editState?true:false}><FaList/></button>
+                    <button className="edit" onClick={() => {setEditText(true)}} disabled={props.editState?true:false}><FaEdit/></button>
                 </div>
                 <div style={editMode}>
                     <button 

@@ -251,7 +251,7 @@ const PdfWrite = () => {
                 <ReactDragListView
                     lineClassName="dragLine"
                     handleSelector='button.chapter-dragger'
-                    nodeSelector={`${mode.state==='edit' ? "" : "tr"}`}
+                    nodeSelector={`${mode.state==='edit' ? "null" : "tr"}`}
                     onDragEnd={(fromIndex, toIndex) =>
                         onDragEnd(fromIndex, toIndex)
                     }
