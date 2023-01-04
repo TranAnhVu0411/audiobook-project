@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import {main_axios_instance, pdf_axios_instance} from '../../service/custom-axios';
 import {useLocation} from "react-router-dom";
 import {v4 as uuidv4} from "uuid";
@@ -8,9 +8,9 @@ import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import './style.scss';
 import 'react-tabs/style/react-tabs.css';
-import ReactTooltip from 'react-tooltip';
 import ReactDragListView from "react-drag-listview";
 import axios from "axios";
+import PreviewPDF from "../../components/PreviewPDF/PreviewPDF";
 
 const PdfWrite = () => {
     const location = useLocation();
@@ -19,7 +19,6 @@ const PdfWrite = () => {
     const [isUpload, setIsUpload] = useState(true);
     const bookId = location.pathname.split("/")[3];
     
-
     const [chapterForm, setChapterForm] = useState({
         id: "",
         name: "",
@@ -29,7 +28,10 @@ const PdfWrite = () => {
     // mode hiện tại (Chỉnh sửa, thêm) và id của dòng đang chỉnh sửa
     const [mode, setMode] = useState({state: 'submit', id: ""})
     const [chapterList, setChapterList] = useState([])
-    const [chapterPDF, setChapterPDF] = useState(null)
+    const [pdf, setPdf] = useState({
+        file: null,
+        url: null
+    })
 
     useEffect(() => {
         const fetchData = async () => {
@@ -48,12 +50,26 @@ const PdfWrite = () => {
         setChapterForm(prev => ({...prev, [e.target.name]: e.target.value}))
     }
 
-    // Xử lý upload ảnh
+    // Xử lý upload pdf
+    const fileInput = useRef(null);
     const handlePDF = e => {
-        if (e.target.name === "chapterPDF"){
-            setChapterPDF(e.target.files[0])
+        if (e.target.name === "pdf"){
+            setPdf({
+                file: e.target.files[0],
+                url: URL.createObjectURL(e.target.files[0])
+            })
         }
     }
+
+    const handleDeletePdf = () => {
+        fileInput.current.value=null;
+        setPdf({
+            file: null,
+            url: null
+        })
+    };
+
+    const [isViewerOpen, setIsViewerOpen] = useState(false);
 
     // Reset các trường trong form
     const resetChapterForm = () => {
@@ -151,7 +167,7 @@ const PdfWrite = () => {
         e.preventDefault();
         
         try{
-            if (chapterPDF === null){
+            if (pdf === null){
                 throw "empty pdf"
             }
 
@@ -165,11 +181,11 @@ const PdfWrite = () => {
             console.log(resUrl)
             // Upload pdf lên cloud
             var pdfHeaders = new Headers();
-            pdfHeaders.append("Content-Type", chapterPDF.type);
+            pdfHeaders.append("Content-Type", pdf.type);
             await fetch(resUrl.data.url, {
                 method: 'PUT',
                 headers: pdfHeaders,
-                body: chapterPDF,
+                body: pdf.file,
                 redirect: 'follow'
             })
             // Tạo mới chapter
@@ -208,9 +224,10 @@ const PdfWrite = () => {
                 toast.error("Xuất hiện lỗi phát sinh khi upload chương", {position: toast.POSITION.TOP_CENTER});
             }
         };
-
     }
 
+    console.log(isViewerOpen)
+    
     if (isLoad && isUpload){
         return (
             <div className="pdf-write">
@@ -221,7 +238,18 @@ const PdfWrite = () => {
                         <hr></hr>
                     </div>
                     <div className="file-input">
-                        <input type='file' name="chapterPDF" id="chapterPDF" accept="application/pdf" onChange={handlePDF}/>
+                        <input type='file' name="pdf" id="pdf" accept="application/pdf" onChange={handlePDF} ref={fileInput}/>
+                        <div style={{display: pdf.url===null?"none":"flex"}}>
+                            <button className='delete' onClick={handleDeletePdf} title="Xoá PDF">Xoá PDF</button>
+                            <button className='preview' onClick={() => setIsViewerOpen(true)} title="Preview PDF">Preview PDF</button> 
+                        </div>
+                        {isViewerOpen ? 
+                            <PreviewPDF
+                                src={pdf.url}
+                                onClose={() => setIsViewerOpen(false)}
+                            /> : 
+                            <></>
+                        }
                     </div>
                     <div className="text-input">
                         <label>Tiêu đề chương</label>
