@@ -1,0 +1,53 @@
+.audio-book{
+    margin-top: 20px;
+    background-color: white;
+    border-radius: 25px;
+    padding: 20px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+
+    .pdf-toolbar{
+        display: flex;
+        align-items: 'center';
+        background-color: '#eeeeee';
+        border: 1px solid gray;
+        padding: 4px;
+        .zoom-gotopage-section{
+            display: flex;
+            align-items: center;
+            gap: 50px;
+            .zoom-section{
+                display: flex;
+                align-items: center;
+            }
+            .gotopage-section{
+                display: flex;
+                gap: 10px;
+                align-items: center;
+            }
+        }
+        button{
+            background-color: transparent;
+            border: none;
+            font-size: 20px;
+        }
+        div{
+            align-self: center;
+        }
+    }
+
+    .pdf-viewer{
+        border: 1px solid gray;
+        height: 100vh;
+    }
+    audio{
+        width: 100%;
+    }
+
+    .highlight{
+        background: yellow;
+        opacity: 0.4;
+    }
+}
