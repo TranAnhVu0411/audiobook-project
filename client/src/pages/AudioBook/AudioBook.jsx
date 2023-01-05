@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import {pdf_axios_instance} from '../../service/custom-axios';
 import LoadingScreen from '../../components/LoadingScreen/LoadingScreen';
-import { BsZoomIn, BsZoomOut, BsHeadphones } from 'react-icons/bs';
+import {BsZoomIn, BsZoomOut, BsHeadphones, BsFullscreenExit, BsFullscreen, BsFillCaretRightFill, BsFillCaretLeftFill} from 'react-icons/bs';
 
 // Import the main component
 import { Viewer } from '@react-pdf-viewer/core';
@@ -20,6 +20,7 @@ import './style.scss';
 
 
 const AudioBook = () => {
+    const navigate = useNavigate();
     const location = useLocation();
     const chapterId = location.pathname.split("/").at(-1);
     const [metaData, setMetadata] = useState({})
@@ -59,33 +60,13 @@ const AudioBook = () => {
             }
         }
         fetchData()
-    }, [])
+    }, [chapterId])
 
     // Toolbar
     const toolbarPluginInstance = toolbarPlugin();
     const { Toolbar } = toolbarPluginInstance
 
-    // Highlight audio
-    const [audioView, setAudioView] = useState(false);
-    const [currentTime, setCurrentTime] = useState(0);
-    const [duration, setDuration] = useState(0);
-    const [isPlay, setPlay] = useState(false);
-    const [currentSentenceId, setCurrentSentenceId] = useState(null);
-
-    const timeUpdate = (e) => {
-        const highlightMetadata = metaData['sentences'].find((sentence) => {
-            return sentence.endTime > e.target.currentTime;
-        });
-        if(currentSentenceId!==highlightMetadata['sentenceId']){
-            document.querySelectorAll('.highlight-box.highlight').forEach((el) => el.classList.remove('highlight'));
-            for(let i = 0; i < highlightMetadata["highlightAreas"].length; i++){
-                const highlightElement = document.querySelector(`#s${highlightMetadata["sentenceId"]}${i}`)
-                highlightElement.classList.add('highlight');
-            }
-            setCurrentSentenceId(highlightMetadata['sentenceId']);
-        }
-    }
-
+    // Render Highlight
     const renderHighlights = (props) => (
         <div className='hello'>
             {metaData['sentences'].map((sentence) => (
@@ -112,9 +93,80 @@ const AudioBook = () => {
         renderHighlights,
     });
 
+    // Audio
+    const { jumpToHighlightArea } = highlightPluginInstance;
+
+    const [audioView, setAudioView] = useState(false);
+    const [currentSentenceId, setCurrentSentenceId] = useState(null);
+    const [currentTime, setCurrentTime] = useState(0);
+
+    // Hiển thị highlight khi chạy auido
+    const timeUpdate = (e) => {
+        const highlightMetadata = metaData['sentences'].find((sentence) => {
+            return sentence.endTime >= e.target.currentTime;
+        });
+        if(currentSentenceId!==highlightMetadata['sentenceId']){
+            document.querySelectorAll('.highlight-box.highlight').forEach((el) => el.classList.remove('highlight'));
+            for(let i = 0; i < highlightMetadata["highlightAreas"].length; i++){
+                const highlightElement = document.querySelector(`#s${highlightMetadata["sentenceId"]}${i}`)
+                highlightElement.classList.add('highlight');
+            }
+            setCurrentSentenceId(highlightMetadata['sentenceId']);
+            jumpToHighlightArea(highlightMetadata.highlightAreas[0]);
+        }
+    }
+
+    // Set lại thời gian chạy khi thay đổi vị trí trang (là highlight đầu tiên của page đang hiển thị)
+    const handlePageChange = (e) => {
+        const highlightMetadata = metaData['sentences'].find((sentence) => {
+            return sentence.pageIndex == e.currentPage;
+        });
+        setCurrentTime(highlightMetadata.endTime-highlightMetadata.duration)
+    };
+
+    const handleAudioView = () => {
+        let audioTag = document.querySelectorAll('#audiobook-audio')[0]
+        if (audioView) {
+            // Xoá toàn bộ highlight
+            document.querySelectorAll('.highlight-box.highlight').forEach((el) => el.classList.remove('highlight'));
+            // Ngắt audio khi không bật audio view
+            audioTag.pause()
+        }else{
+            // Bật audio khi bật audio view
+            audioTag.play()
+            // Set thời gian bắt đầu của audio theo vị trí trang 
+            audioTag.currentTime=currentTime
+        }
+        setAudioView(!audioView)
+    }
+
+    const handlePreviousChapter = async() => {
+        const checkRes = await pdf_axios_instance(`/chapters/${chapterId}?state=previous`)
+        if (checkRes.data['pdfStatus']==='ready'&&checkRes.data['audioStatus']==='ready'){
+            // Nếu pdf và audio chưa sẵn sàng => đưa ra cảnh báo
+            navigate(`/chapter/${checkRes.data['chapter']["_id"]["$oid"]}`)
+        }else{
+            // Nếu không => chuyển trang
+            window.alert('Chương đang trong quá trình chỉnh sửa, xin vui lòng thử lại sau')
+        }
+    }
+
+    // Tương tự như trên
+    const handleNextChapter = async() => {
+        const checkRes = await pdf_axios_instance(`/chapters/${chapterId}?state=next`)
+        if (checkRes.data['pdfStatus']==='ready'&&checkRes.data['audioStatus']==='ready'){
+            navigate(`/chapter/${checkRes.data['chapter']["_id"]["$oid"]}`)
+        }else{
+            window.alert('Chương đang trong quá trình chỉnh sửa, xin vui lòng thử lại sau')
+        }
+    }
+
+    // Full Screen
+    const [fullScreen, setFullScreen] = useState(true);
+
     if (isLoad){
         return (
-            <div className='audio-book'>
+            <div className={`audio-book ${fullScreen?'fullscreen-mode':'normal-mode'}`}>
                 <div className="pdf-toolbar">
                     <Toolbar>
                         {(props) => {
@@ -127,61 +179,88 @@ const AudioBook = () => {
                             } = props;
                             return (
                                 <>
-                                    <div className='zoom-gotopage-section'>
-                                        <div className='zoom-section'>
-                                            <div>
-                                                <ZoomOut>
-                                                    {(props) => (
-                                                        <button onClick={props.onClick}>
-                                                            <BsZoomOut/>
-                                                        </button>
-                                                    )}
-                                                </ZoomOut>
-                                            </div>
-                                            <div>
-                                                <CurrentScale/>
-                                            </div>
-                                            <div>
-                                                <ZoomIn>
-                                                    {(props) => (
-                                                        <button onClick={props.onClick}>
-                                                            <BsZoomIn/>
-                                                        </button>
-                                                    )}
-                                                </ZoomIn>
-                                            </div>
-                                        </div>
-                                        <div className='gotopage-section'>
-                                            <CurrentPageInput/>
-                                            <span>/</span>
-                                            <NumberOfPages/>
+                                    <div className='zoom-section'>
+                                        <div>
+                                            <ZoomOut>
+                                                {(props) => (
+                                                    <button onClick={props.onClick} title="Phóng to">
+                                                        <BsZoomOut/>
+                                                    </button>
+                                                )}
+                                            </ZoomOut>
                                         </div>
                                         <div>
-                                            <button 
-                                                onClick={() => {setAudioView(!audioView)}} 
-                                                style = {{
-                                                    backgroundColor: audioView?'black':'white',
-                                                    color: audioView?'white':'black',
-                                                }}
-                                            >
-                                                <BsHeadphones/>
-                                            </button>
+                                            <CurrentScale/>
                                         </div>
+                                        <div>
+                                            <ZoomIn>
+                                                {(props) => (
+                                                    <button onClick={props.onClick} title="Thu nhỏ">
+                                                        <BsZoomIn/>
+                                                    </button>
+                                                )}
+                                            </ZoomIn>
+                                        </div>
+                                    </div>
+                                    <div className='gotopage-section'>
+                                        <span style={{width: '4rem'}}><CurrentPageInput/></span>
+                                        <span>of</span>
+                                        <NumberOfPages/>
+                                    </div>
+                                    <div className='ultilize-section'>
+                                        <button 
+                                            className='chapter-change-button'
+                                            onClick={handlePreviousChapter} 
+                                            disabled={metaData['chapter']['index']===1?true:false}
+                                        >
+                                            <BsFillCaretLeftFill/><span>Chương trước</span>
+                                        </button>
+                                        <button 
+                                            className='chapter-change-button'
+                                            onClick={handleNextChapter}  
+                                            disabled={metaData['chapter']['index']===metaData['numChapter']?true:false}
+                                        >
+                                            <span>Chương sau</span><BsFillCaretRightFill/>
+                                        </button>
+                                        <button 
+                                            onClick={handleAudioView} 
+                                            style = {{
+                                                backgroundColor: audioView?'black':'white',
+                                                color: audioView?'white':'black',
+                                            }}
+                                            title={audioView?'Tắt audio':'Bật audio'}
+                                        >
+                                            <BsHeadphones/>
+                                        </button>
+                                        <button 
+                                            onClick={() => setFullScreen(!fullScreen)}
+                                            title={fullScreen?'Tắt toàn màn hình':'Bật toàn màn hình'}
+                                        >
+                                            {fullScreen?<BsFullscreenExit/>:<BsFullscreen/>}
+                                        </button>
                                     </div>
                                 </>
                             );
                         }}
                     </Toolbar>
                 </div>
-                <audio 
-                    controls 
-                    className="player"
-                    style={{display: audioView?'flex':'none'}} 
-                    src={url.audio}
-                    onTimeUpdate={timeUpdate}
-                />
-                <div className='pdf-viewer'>
-                    <Viewer fileUrl={url.pdf} plugins={[toolbarPluginInstance, highlightPluginInstance]} />
+                <div style={{display: audioView?'flex':'none'}} >
+                    <audio 
+                        id = 'audiobook-audio'
+                        controls 
+                        src={url.audio}
+                        onTimeUpdate={timeUpdate}
+                    />
+                </div>
+                <div 
+                    className='pdf-viewer' 
+                    style={fullScreen?
+                        (audioView?{height: '80vh'}:{height: '100vh'}):
+                        (audioView?{height: '70vh'}:{height: '80vh'})}>
+                    <Viewer 
+                        fileUrl={url.pdf}
+                        onPageChange={handlePageChange} 
+                        plugins={[toolbarPluginInstance, highlightPluginInstance]} />
                 </div>
             </div>
         )
