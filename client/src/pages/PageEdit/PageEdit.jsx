@@ -214,7 +214,6 @@ const PageEdit = () => {
         setNewState(false)
         toast.success("Thêm mới câu thành công", {position: toast.POSITION.TOP_CENTER});
     }
-    // console.log(newState, editState);
 
     // Xử lý hiển thị/thoát chế độ edit bounding box
     const handleEdit = () =>{
@@ -249,28 +248,30 @@ const PageEdit = () => {
     }
 
     const handleDelete = () => {
-        let removeId = sentenceInfo.reduce((removeId, sentence) => {
-            if (sentence.state){
-                removeId.push(sentence.sentenceId)
-            }
-            return removeId
-        }, [])
-        setRemoveSentenceId(removeSentenceId.concat(removeId.filter(id => {
-            // Nếu sentence đó không có trong csdl ban đầu => Không cần lưu
-            return !id.includes("new")
-        })))
-        setSentenceInfo([
-            ...sentenceInfo.filter(sentence => {
-                return !removeId.includes(sentence.sentenceId);
-            }),
-        ])
-        setSentenceBoundingBox([
-            ...sentenceBoundingBox.filter(bb => {
-                return !removeId.includes(bb.sentenceId);
-            }),
-        ])
-        setDisplayRectangles([])
-        setCheckedSentenceId([])
+        if (window.confirm("Nếu thực hiện, mọi thay đổi sẽ không được hoàn tác lại\nBạn có chắc chắn muốn thực hiện tác vụ trên?")){    
+            let removeId = sentenceInfo.reduce((removeId, sentence) => {
+                if (sentence.state){
+                    removeId.push(sentence.sentenceId)
+                }
+                return removeId
+            }, [])
+            setRemoveSentenceId(removeSentenceId.concat(removeId.filter(id => {
+                // Nếu sentence đó không có trong csdl ban đầu => Không cần lưu
+                return !id.includes("new")
+            })))
+            setSentenceInfo([
+                ...sentenceInfo.filter(sentence => {
+                    return !removeId.includes(sentence.sentenceId);
+                }),
+            ])
+            setSentenceBoundingBox([
+                ...sentenceBoundingBox.filter(bb => {
+                    return !removeId.includes(bb.sentenceId);
+                }),
+            ])
+            setDisplayRectangles([])
+            setCheckedSentenceId([])
+        }
     }
 
     const handleSubmit = async() => {
@@ -289,8 +290,10 @@ const PageEdit = () => {
             let deleteResponsesList = await axios.all(deleteRequestsList)
             console.log(deleteResponsesList)
 
-            // Update thông tin sentence
-            let updateRequestsList = []
+
+
+            // Update/Create thông tin sentence
+            let requestsList = []
             for (let i = 0; i < sentenceInfo.length; i++){
                 let sentenceForm = new FormData();
                 sentenceForm.append(
@@ -303,10 +306,18 @@ const PageEdit = () => {
                 )
                 sentenceForm.append('text', sentenceInfo[i].text)
                 sentenceForm.append('index', i+1)
-                updateRequestsList.push(pdf_axios_instance.put(`/sentences/${sentenceInfo[i].sentenceId}`, sentenceForm))
+                
+                if (sentenceInfo[i].sentenceId.includes('new-')){
+                    // Nếu sentenceId có new => sentence mới => post
+                    sentenceForm.append('pageId', pageId)
+                    requestsList.push(pdf_axios_instance.post(`/sentences`, sentenceForm))
+                }else{
+                    // Nếu không, cập nhật thông tin sentence
+                    requestsList.push(pdf_axios_instance.put(`/sentences/${sentenceInfo[i].sentenceId}`, sentenceForm))
+                }
             }
-            let updateResponsesList = await axios.all(updateRequestsList)
-            console.log(updateResponsesList)
+            let responsesList = await axios.all(requestsList)
+            console.log(responsesList)
 
             // Chỉnh sửa audio cho sách
             let preprocessForm = new FormData()

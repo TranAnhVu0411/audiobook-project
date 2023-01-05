@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './style.scss'
 import { FaRegEdit, FaRegPlusSquare, FaRegTrashAlt } from 'react-icons/fa'
 import ReactDragListView from "react-drag-listview";
@@ -31,7 +31,7 @@ const SentenceInfo = (props) => {
                     title="Xoá các câu được check"
                     onClick={props.handleDelete}
                     style = {{
-                        display: `${props.checkedSentenceId.length===1?"flex":"none"}`, 
+                        display: `${props.checkedSentenceId.length!==0?"flex":"none"}`, 
                     }}
                 >
                     <FaRegTrashAlt/>

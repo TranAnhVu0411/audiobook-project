@@ -34,9 +34,9 @@ const Rectangle = ({ shapeProps, isSelected, onSelect, onChange, canvasMeasures,
         onTap={onSelect}
         ref={shapeRef}
         {...shapeProps}
-        strokeWidth={type==='boundingbox'? 2:0}
+        strokeWidth={type==='boundingbox'? 2:0} // Nếu là highlight => không cần viền
         stroke={color}
-        fill={type==='boundingbox'?null:color}
+        fill={type==='boundingbox'?null:color} // Nếu là bounding box => không cần nền
         draggable={edit}
         strokeScaleEnabled={false}
         onMouseEnter={onMouseEnter}

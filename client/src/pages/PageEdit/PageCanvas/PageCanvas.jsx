@@ -1,4 +1,4 @@
-import React, { useState, useRef, useLayoutEffect, useEffect } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Stage, Layer } from 'react-konva';
 import {v4 as uuidv4} from "uuid";
 import { BiZoomIn, BiZoomOut, BiSave, BiColorFill } from "react-icons/bi"
@@ -48,7 +48,7 @@ const PageCanvas = (props) => {
                 if (selectedId === null && newRectangle.length === 0){
                     const { x, y } = e.target.getStage().getRelativePointerPosition();
                     const id = uuidv4();
-                    setNewRectangle([{ x, y, width: 0, height: 0, stroke: props.bbColor, strokeWidth: 2, id: id }]);
+                    setNewRectangle([{ x: x, y: y, width: 0, height: 0, id: id }]);
                 }
             }
         }
@@ -66,9 +66,7 @@ const PageCanvas = (props) => {
                 y: sy,
                 width: x - sx,
                 height: y - sy,
-                id: id, 
-                stroke: props.bbColor, 
-                strokeWidth: 2
+                id: id,
                 };
                 if (rectangleToAdd.width===0 || rectangleToAdd.height===0){
                     setNewRectangle([]);
@@ -95,8 +93,6 @@ const PageCanvas = (props) => {
                     width: x - sx,
                     height: y - sy,
                     id: id, 
-                    stroke: props.bbColor, 
-                    strokeWidth: 2
                 }
                 ]);
             }

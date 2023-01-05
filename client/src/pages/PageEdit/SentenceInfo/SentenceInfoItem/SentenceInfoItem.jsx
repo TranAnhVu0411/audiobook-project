@@ -53,7 +53,12 @@ const SentenceInfoItem = (props) => {
                     >
                         <FaSave/>
                     </button>
-                    <button className="discard" onClick={() => {setEditText(false)}}><FaWindowClose/></button>
+                    <button className="discard" onClick={() => {
+                        setEditText(false) 
+                        setText(props.sentence.text)
+                    }}>
+                        <FaWindowClose/>
+                    </button>
                 </div>
             </div>
         </div>     
