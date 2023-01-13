@@ -1,12 +1,35 @@
 .chapter-pages-edit{
     display: flex;
     flex-direction: column;
-    gap: 20px;
-    background-color: white;
-    border-radius: 25px;
-    padding: 10px;
-    padding: 30px;
+    gap: 10px;
     h2{
         margin: 0;
+    }
+    .chapter-pages-list{
+        background-color: white;
+        border-radius: 25px;
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        .chapter-pages-list-header{
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+        }
+    }
+    .chapter-pages-write{
+        display: flex;
+        flex-direction: column;
+        gap: 20px;
+        background-color: white;
+        border-radius: 25px;
+        padding: 30px;
+        .chapter-pages-write-header{
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            align-items: center;
+        }
     }
 }

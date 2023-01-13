@@ -17,23 +17,29 @@
     }
     .info-form-header{
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         gap: 10px;
         label{
             font-size: 20px;
             font-weight: bold;
         }
-        div{
+        .info-form-button{
             display: flex;
             flex-direction: row;
             gap: 10px;
-        }
-        button{
-            color: white;
-            border: none;
-            border-radius: 5px;
-            transition: 0.3s;
-            cursor: pointer;
+            div{
+                display: flex;
+                flex-direction: row;
+                gap: 10px;
+            }
+            button{
+                color: white;
+                border: none;
+                border-radius: 5px;
+                transition: 0.3s;
+                cursor: pointer;
+                font-size: 16px;
+            }
         }
     }
     .info-form{

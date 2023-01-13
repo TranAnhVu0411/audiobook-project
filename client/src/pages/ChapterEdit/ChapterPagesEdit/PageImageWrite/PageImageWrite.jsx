@@ -1,5 +1,6 @@
 import React, {useState, useRef} from 'react';
 import ImageViewer from "react-simple-image-viewer";
+import { MdDelete, MdPreview } from 'react-icons/md'
 import './style.scss';
 
 const PageImageWrite = (props) => {
@@ -18,7 +19,7 @@ const PageImageWrite = (props) => {
         }
     };
 
-    const handleDeleteImage = e => {
+    const handleDeleteImage = () => {
         fileInput.current.value=null;
         setImage({
             file: null,
@@ -27,17 +28,7 @@ const PageImageWrite = (props) => {
     };
 
     // Preview 
-    const [clickImg, setClickImg] = useState(null)
     const [isViewerOpen, setIsViewerOpen] = useState(false);
-    const openImageViewer = () => {
-        setClickImg(image.url);
-        setIsViewerOpen(true);
-    }
-
-    const closeImageViewer = () => {
-        setClickImg(null);
-        setIsViewerOpen(false);
-    };
 
     return (
         <div className='page-image-write'>
@@ -45,8 +36,8 @@ const PageImageWrite = (props) => {
                 <div className='file-input-header'>
                     <label>Ảnh trang:</label>
                     <div style={{display: image.url===null?"none":"flex"}}>
-                        <button className='delete' onClick={handleDeleteImage}>Xoá ảnh</button>
-                        <button className='preview' onClick={openImageViewer}>Preview Ảnh</button> 
+                        <button className='delete' onClick={handleDeleteImage} title="Xoá ảnh"><MdDelete /></button>
+                        <button className='preview' onClick={() => setIsViewerOpen(true)} title="Preview ảnh"><MdPreview/></button> 
                     </div>
                 </div>
                 <input type="file" name="image" id="image" accept="image/png, image/jpg, image/jpeg" onChange={handlePreviewImage} ref={fileInput}/>
@@ -58,9 +49,9 @@ const PageImageWrite = (props) => {
             </div>
             {isViewerOpen ? 
                 <ImageViewer 
-                    src={[clickImg]}
+                    src={[image.url]}
                     currentIndex={0}
-                    onClose={closeImageViewer}
+                    onClose={() => setIsViewerOpen(false)}
                     backgroundStyle={{
                     backgroundColor: "rgba(0,0,0,0.9)"
                     }}

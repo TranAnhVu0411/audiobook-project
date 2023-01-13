@@ -4,7 +4,7 @@ import './style.scss';
 
 
 const ChapterInfoEdit = (props) => {
-    const [chapterNameInput, setChapterNameInput] = useState(props.chapterName)
+    const [chapterNameInput, setChapterNameInput] = useState(props.chapter.name)
     const [editing, setEditing] = useState(false)
     let viewMode = {}
     let editMode = {}
@@ -22,23 +22,36 @@ const ChapterInfoEdit = (props) => {
                 <hr></hr>
             </div>
             <div className="info-form-header">
-                <label>Tiêu đề chương</label>
-                <div style={viewMode}>
-                    <button style={{backgroundColor: "#428bca"}} onClick={() => {setEditing(true)}}>
-                        <AiOutlineEdit/>
-                    </button>
-                </div>
-                <div style={editMode}>
-                    <button style={{backgroundColor: "#5eb95b"}} onClick={ () => {
-                            props.handleChapterName(chapterNameInput);
-                            setEditing(false);
-                        }
-                    }>
-                        <AiOutlineSave/>
-                    </button>
-                    <button style={{backgroundColor: "#D8000C"}}onClick={() => {setEditing(false);}}>
-                        <AiOutlineClose/>
-                    </button>
+                <span><label>Chương số: </label><span>{props.chapter.index}</span></span>
+                <div className="info-form-button">
+                    <label>Tiêu đề chương</label>
+                    <div style={viewMode}>
+                        <button style={{backgroundColor: "#428bca"}} onClick={() => {setEditing(true)}} title="Chỉnh sửa tên chương">
+                            <AiOutlineEdit/>
+                        </button>
+                    </div>
+                    <div style={editMode}>
+                        <button 
+                            style={{backgroundColor: "#5eb95b"}} 
+                            onClick={() => {
+                                props.handleChapterName(chapterNameInput);
+                                setEditing(false);
+                            }}
+                            title="Lưu thay đổi"
+                        >
+                            <AiOutlineSave/>
+                        </button>
+                        <button 
+                            style={{backgroundColor: "#D8000C"}} 
+                            onClick={() => {
+                                setEditing(false);
+                                setChapterNameInput(props.chapter.name);
+                            }} 
+                            title="Huỷ thay đổi"
+                        >
+                            <AiOutlineClose/>
+                        </button>
+                    </div>
                 </div>
             </div>
             <div className="info-form">
@@ -51,7 +64,7 @@ const ChapterInfoEdit = (props) => {
                     }}
                 />
                 <span style={viewMode}>
-                    {props.chapterName}
+                    {props.chapter.name}
                 </span>
             </div>
         </div>
