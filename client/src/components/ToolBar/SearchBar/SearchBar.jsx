@@ -58,7 +58,8 @@ const SearchBar = (props) => {
         'Hạnh phúc', 'Tiểu thuyết', 'Thiếu nhi'
     ];
     const categoryInitialState = []
-    categoryOption.forEach(category => categoryInitialState.push({id: category, state: false}));
+    const categoryQuery = props.searchParams.get('cat')===null?[]:props.searchParams.get('cat').split(",")// Category trong query url
+    categoryOption.forEach(category => categoryInitialState.push({id: category, state: categoryQuery.includes(cat2url[category])}));
     const [categories, setCategory] = useState(categoryInitialState)
     const handleCategory = (e) => {
         setCategory(prevState => prevState.map(category => {

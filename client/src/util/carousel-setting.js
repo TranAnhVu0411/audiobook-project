@@ -1,27 +1,30 @@
-export const sectionSettings= {
+export const sectionSettings = (numSlides) => {
+  return{
     dots: false,
     infinite: true,
     speed: 500,
-    slidesToShow: 4,
+    slidesToShow: numSlides<4?numSlides:4,
     slidesToScroll: 1,
     initialSlide: 0,
     responsive: [
       {
         breakpoint: 992,
         settings: {
-          slidesToShow: 3,
+          slidesToShow: numSlides<3?numSlides:3,
           slidesToScroll: 1,
         }
       },
       {
         breakpoint: 768,
         settings: {
-          slidesToShow: 2,
+          slidesToShow: numSlides<2?numSlides:2,
           slidesToScroll: 1,
         }
       }
     ]
-  };
+  }
+}
+    
 
 export const headerSettings = {
   dots: true,

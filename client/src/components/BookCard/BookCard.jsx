@@ -105,17 +105,19 @@ const BookCard = (props) => {
                 <div className="info-list">
                     {
                         props.book.categories.map((category) => {
-                            if (getRole(currentUser) !== "admin"){
-                                return <Link key={uuidv4()} className='info-link' to={`/book/category/${cat2url[category]}`}>
-                                        <div className='info-item' style={{backgroundColor: getBackgroundColor(category), border: "1px solid " + getBorderColor(category)}}>
-                                            {category}
-                                        </div>
-                                    </Link>
-                            }else{
-                                return <div key={uuidv4()} className='info-item' style={{backgroundColor: getBackgroundColor(category), border: "1px solid " + getBorderColor(category)}}>
-                                            {category}
-                                        </div>
-                            }
+                            return(
+                                <Link 
+                                    key={uuidv4()} 
+                                    className='info-link' 
+                                    to={(getRole(currentUser) !== "admin")?`/book/category/${cat2url[category]}`:`/booklist?cat=${cat2url[category]}`}
+                                >
+                                    <div 
+                                        className='info-item' 
+                                        style={{backgroundColor: getBackgroundColor(category), border: "1px solid " + getBorderColor(category)}}
+                                    >
+                                        {category}
+                                    </div>
+                                </Link>)
                         })
                     }
                 </div>

@@ -21,7 +21,8 @@ import PdfWrite from './pages/PdfWrite/PdfWrite';
 import { ToastContainer } from "react-toastify";
 import PageEdit from './pages/PageEdit/PageEdit';
 import ChapterEdit from './pages/ChapterEdit/ChapterEdit';
-
+import AudioBook from './pages/AudioBook/AudioBook';
+import { Worker } from '@react-pdf-viewer/core';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
         <div className='container'>
         <AuthContextProvider>
           <Navbar/>
+          <Worker workerUrl="https://unpkg.com/pdfjs-dist@3.1.81/build/pdf.worker.min.js"/>
           <ToastContainer />
             <Routes>
               <Route path="/login" element={<Login />} />
@@ -39,14 +41,15 @@ function App() {
               <Route path="/book/category/:cat" element={<Index />} />
               <Route path="/book/advance-search/page/:page" element={<Index />} />
               <Route path="/book/advance-search" element={<Index />} />
+              <Route path="/chapter/:id" element={<AudioBook />} />
               <Route element={<AuthContextRequirement role={['admin']} />}>
                   <Route path="/dashboard" element={<DashBoard />} />
                   <Route path="/book/new" element={<BookWrite />} /> 
                   <Route path="/booklist/page/:page" element={<Index />} />
                   <Route path="/booklist" element={<Index />} />
-                  <Route path="book/info/:id/chapter/new" element={<ChapterWrite />} />
-                  <Route path="book/info/:id/pdf/new" element={<PdfWrite />} />
-                  <Route path="chapter/:id/edit" element={<ChapterEdit/>}/>
+                  <Route path="/book/info/:id/chapter/new" element={<ChapterWrite />} />
+                  <Route path="/book/info/:id/pdf/new" element={<PdfWrite />} />
+                  <Route path="/chapter/:id/edit" element={<ChapterEdit/>}/>
                   <Route path="/page/:id/edit" element={<PageEdit />} />
                   <Route path="/book/info/:id/update" element={<BookWrite />} /> 
               </Route>

@@ -49,7 +49,7 @@ const Home = () => {
                         </div>
                     </div>
                     <div className="section-items">
-                        <Slider {...sectionSettings}>
+                        <Slider {...sectionSettings(recentBooks.length)}>
                         {
                             recentBooks.map(book => {
                                 return <BookCard key={book._id} book={book}/>
