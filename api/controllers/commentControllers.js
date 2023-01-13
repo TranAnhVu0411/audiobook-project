@@ -31,8 +31,12 @@ module.exports = {
         })
     },
     update: (req, res) => {
+        let updateContent = {}
+        Object.keys(req.body).forEach(field => {
+            updateContent[field]=req.body[field]
+        })
         let commentId = req.params.id;
-        Comment.findByIdAndUpdate(commentId, {$set:{comment: req.body.comment}}).then(
+        Comment.findByIdAndUpdate(commentId, {$set:updateContent}).then(
             comment => {
                 res.status(200).json({comment: comment})
             }
@@ -42,7 +46,6 @@ module.exports = {
         )
     },
     indexByBook: (req, res) => {
-        let commentsInfo = []
         Comment.find({book: mongoose.Types.ObjectId(req.params.id)}, {}, {sort: { 'createdAt' : -1 }}).populate('user').then(
             comments => {
                 res.status(200).json(comments)
