@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react';
 import { useLocation, useNavigate } from "react-router-dom";
 import {pdf_axios_instance} from '../../service/custom-axios';
 import LoadingScreen from '../../components/LoadingScreen/LoadingScreen';
-import {BsZoomIn, BsZoomOut, BsHeadphones, BsFullscreenExit, BsFullscreen, BsFillCaretRightFill, BsFillCaretLeftFill} from 'react-icons/bs';
+import {BsZoomIn, BsZoomOut, BsHeadphones, BsFullscreenExit, BsFullscreen, BsFillCaretRightFill, BsFillCaretLeftFill, BsArrowReturnLeft} from 'react-icons/bs';
 
 // Import the main component
 import { Viewer } from '@react-pdf-viewer/core';
@@ -119,7 +119,7 @@ const AudioBook = () => {
     // Set lại thời gian chạy khi thay đổi vị trí trang (là highlight đầu tiên của page đang hiển thị)
     const handlePageChange = (e) => {
         const highlightMetadata = metaData['sentences'].find((sentence) => {
-            return sentence.pageIndex == e.currentPage;
+            return sentence.pageIndex === e.currentPage;
         });
         setCurrentTime(highlightMetadata.endTime-highlightMetadata.duration)
     };
@@ -221,6 +221,12 @@ const AudioBook = () => {
                                             disabled={metaData['chapter']['index']===metaData['numChapter']?true:false}
                                         >
                                             <span>Chương sau</span><BsFillCaretRightFill/>
+                                        </button>
+                                        <button 
+                                            onClick={() => navigate(`/book/info/${metaData['chapter']["book"]["$oid"]}`)} 
+                                            title="Quay về thông tin sách"
+                                        >
+                                            <BsArrowReturnLeft/>
                                         </button>
                                         <button 
                                             onClick={handleAudioView} 
