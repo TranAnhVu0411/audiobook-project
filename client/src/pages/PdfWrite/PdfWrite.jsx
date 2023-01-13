@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from "react";
+import React, {useState, useEffect} from "react";
 import {main_axios_instance, pdf_axios_instance} from '../../service/custom-axios';
 import {useLocation} from "react-router-dom";
 import {v4 as uuidv4} from "uuid";
@@ -7,16 +7,15 @@ import { FaRegEdit, FaTrash, FaList } from "react-icons/fa";
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import './style.scss';
-import 'react-tabs/style/react-tabs.css';
 import ReactDragListView from "react-drag-listview";
 import axios from "axios";
-import PreviewPDF from "../../components/PreviewPDF/PreviewPDF";
 
 const PdfWrite = () => {
     const location = useLocation();
     const [book, setBook] = useState({});
     const [isLoad, setIsLoad] = useState(false);
     const [isUpload, setIsUpload] = useState(true);
+    const [numChapter, setNumChapter] = useState(0);
     const bookId = location.pathname.split("/")[3];
     
     const [chapterForm, setChapterForm] = useState({
@@ -28,16 +27,14 @@ const PdfWrite = () => {
     // mode hiện tại (Chỉnh sửa, thêm) và id của dòng đang chỉnh sửa
     const [mode, setMode] = useState({state: 'submit', id: ""})
     const [chapterList, setChapterList] = useState([])
-    const [pdf, setPdf] = useState({
-        file: null,
-        url: null
-    })
 
     useEffect(() => {
         const fetchData = async () => {
           try {
             const res = await main_axios_instance.get(`/book/${bookId}`);
             setBook(res.data);
+            const chaptersRes = await pdf_axios_instance.get(`/books/${bookId}`);
+            setNumChapter(chaptersRes.data['chapters'].length);
             setIsLoad(true);
           } catch (err) {
             console.log(err);
@@ -49,27 +46,6 @@ const PdfWrite = () => {
     const handleChapterForm = e => {
         setChapterForm(prev => ({...prev, [e.target.name]: e.target.value}))
     }
-
-    // Xử lý upload pdf
-    const fileInput = useRef(null);
-    const handlePDF = e => {
-        if (e.target.name === "pdf"){
-            setPdf({
-                file: e.target.files[0],
-                url: URL.createObjectURL(e.target.files[0])
-            })
-        }
-    }
-
-    const handleDeletePdf = () => {
-        fileInput.current.value=null;
-        setPdf({
-            file: null,
-            url: null
-        })
-    };
-
-    const [isViewerOpen, setIsViewerOpen] = useState(false);
 
     // Reset các trường trong form
     const resetChapterForm = () => {
@@ -167,32 +143,11 @@ const PdfWrite = () => {
         e.preventDefault();
         
         try{
-            if (pdf === null){
-                throw "empty pdf"
-            }
-
-            // Lấy presigned url
-            let urlForm = new FormData();
-            urlForm.append('upload-type', 'PUT')
-            urlForm.append('type', 'book');
-            urlForm.append('id', bookId)
-            urlForm.append('data-type', 'pdf')
-            const resUrl = await pdf_axios_instance.post('/urls', urlForm)
-            console.log(resUrl)
-            // Upload pdf lên cloud
-            var pdfHeaders = new Headers();
-            pdfHeaders.append("Content-Type", pdf.type);
-            await fetch(resUrl.data.url, {
-                method: 'PUT',
-                headers: pdfHeaders,
-                body: pdf.file,
-                redirect: 'follow'
-            })
             // Tạo mới chapter
             let chapterRequestsList = []
             for (let i = 0; i <chapterList.length; i++) {
                 let chapterForm = new FormData();
-                chapterForm.append("index", i+1)
+                chapterForm.append("index", numChapter+i+1)
                 chapterForm.append("name", chapterList[i].name)
                 chapterForm.append("bookId", bookId)
                 chapterForm.append("from", chapterList[i].from)
@@ -216,40 +171,19 @@ const PdfWrite = () => {
             toast.success("Upload pdf thành công, đang xử lý", {position: toast.POSITION.TOP_CENTER});
         }catch(err){
             setIsUpload(true);
-            if (err === 'empty pdf') {
-                console.log(err)
-                toast.error("Vui lòng tải PDF lên", {position: toast.POSITION.TOP_CENTER});
-            }else{
-                console.log(err)
-                toast.error("Xuất hiện lỗi phát sinh khi upload chương", {position: toast.POSITION.TOP_CENTER});
-            }
+            console.log(err)
+            toast.error("Xuất hiện lỗi phát sinh khi upload chương", {position: toast.POSITION.TOP_CENTER});
         };
     }
-
-    console.log(isViewerOpen)
     
     if (isLoad && isUpload){
         return (
             <div className="pdf-write">
                 <div className="chapter-form">
                     <div className="pdf-write-header">
-                        <h1>Upload PDF sách</h1>
-                        <span>Tiêu đề: {book.title}</span>
+                        <h1>Thêm chương truyện theo PDF sách</h1>
+                        <span>Tiêu đề sách: {book.title}</span>
                         <hr></hr>
-                    </div>
-                    <div className="file-input">
-                        <input type='file' name="pdf" id="pdf" accept="application/pdf" onChange={handlePDF} ref={fileInput}/>
-                        <div style={{display: pdf.url===null?"none":"flex"}}>
-                            <button className='delete' onClick={handleDeletePdf} title="Xoá PDF">Xoá PDF</button>
-                            <button className='preview' onClick={() => setIsViewerOpen(true)} title="Preview PDF">Preview PDF</button> 
-                        </div>
-                        {isViewerOpen ? 
-                            <PreviewPDF
-                                src={pdf.url}
-                                onClose={() => setIsViewerOpen(false)}
-                            /> : 
-                            <></>
-                        }
                     </div>
                     <div className="text-input">
                         <label>Tiêu đề chương</label>

@@ -33,14 +33,14 @@ const ChapterWrite = () => {
             const bookRes = await main_axios_instance.get(`/book/${bookId}`);
             setBook(bookRes.data);
             const chaptersRes = await pdf_axios_instance.get(`/books/${bookId}`);
-            setNumChapter(chaptersRes.data.length);
+            setNumChapter(chaptersRes.data['chapters'].length);
             setIsLoad(true);
           } catch (err) {
             console.log(err);
           }
         };
         fetchData();
-    }, [bookId]);
+    }, [bookId, isUpload]);
 
     const handlePreviewImages = (e) => {
         for (let i = 0; i < e.target.files.length; i++){
@@ -99,7 +99,6 @@ const ChapterWrite = () => {
 
     // Submit
     const handleSubmit = async(e) => {
-        setIsUpload(false)
         e.preventDefault();
         try{
             if (chapterImgs.length===0){
@@ -182,11 +181,14 @@ const ChapterWrite = () => {
             <div className="chapter-write">
                 <div className="text-form">
                     <div className="chapter-write-header">
-                        <h1>Thêm chương truyện mới</h1>
+                        <h1>Thêm chương truyện theo ảnh</h1>
                         <span>Tiêu đề sách: {book.title}</span>
                         <hr></hr>
                     </div>
-                    <small>*Chương mới thêm sẽ nằm ở vị trí cuối cùng trong danh sách chương của sách</small>
+                    <span>
+                        <h3>Chương số: {numChapter+1}</h3>
+                        <small>*Chương mới thêm sẽ nằm ở vị trí cuối cùng trong danh sách chương của sách</small>
+                    </span>
                     <div className="text-input">
                         <label>Tiêu đề chương</label>
                         <input type="text" name="name" value={chapterName} onChange={e => {setChapterName(e.target.value)}} placeholder="Nhập tên chương"/>
@@ -225,7 +227,10 @@ const ChapterWrite = () => {
                         <></>
                     }
                     <div className='chapter-submit'>
-                        <button onClick={handleSubmit}> 
+                        <button onClick={(e) => {
+                            setIsUpload(false)
+                            handleSubmit(e)
+                        }}> 
                             <FaRegSave className='icon'/> 
                             <span>Lưu thay đổi</span>
                         </button>
