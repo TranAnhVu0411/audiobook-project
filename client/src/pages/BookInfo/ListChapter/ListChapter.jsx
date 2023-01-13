@@ -4,13 +4,15 @@ import { getRole } from '../../../context/role';
 import ReactTooltip from 'react-tooltip';
 import { useNavigate } from 'react-router-dom';
 import './style.scss';
-import { FaHeadphonesAlt, FaRegEdit, FaFilePdf, FaImages, FaList } from 'react-icons/fa'
+import { FaHeadphonesAlt, FaRegEdit, FaFilePdf, FaImages, FaList, FaRegSave, FaRegWindowClose } from 'react-icons/fa'
+import { CgReorder } from 'react-icons/cg'
 import {GoTriangleLeft, GoTriangleRight} from 'react-icons/go';
 import ReactDragListView from "react-drag-listview";
 import {pdf_axios_instance} from '../../../service/custom-axios';
 import axios from 'axios';
 import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
+import UploadBookPDF from './UploadBookPDF/UploadBookPDF'
 
 const ListChapter = (props) => {
     const navigate = useNavigate();
@@ -20,7 +22,7 @@ const ListChapter = (props) => {
         if (getRole(currentUser)==='guest'){
             return (
                 <>
-                    <button data-tip data-for="chapter-tooltip" onClick={() => {navigate('/login')}}>
+                    <button data-tip data-for="chapter-tooltip" onClick={() => {navigate('/login')}} title="Đọc audio book">
                         <FaHeadphonesAlt/>
                     </button>
                     <ReactTooltip id='chapter-tooltip' effect="solid">
@@ -42,7 +44,9 @@ const ListChapter = (props) => {
                         </Fragment> 
                         :
                         <Fragment>
-                            <FaHeadphonesAlt/>
+                            <button onClick={() => navigate(`/chapter/${chapter_id}`)}>
+                                <FaHeadphonesAlt/>
+                            </button>
                         </Fragment> 
                     }
                 </div>
@@ -112,9 +116,16 @@ const ListChapter = (props) => {
     return (
         <div className="list-chapter">
             <div className="list-chapter-button" style={{display: getRole(currentUser)==='admin'?'flex':'none'}}>
+                <UploadBookPDF
+                    bookPdfStatus={props.bookPdfStatus} 
+                    pdf={props.pdf}
+                    bookId={props.bookId}
+                    handlePdfChange={props.handlePdfChange}
+                    setIsLoad={props.setIsLoad}
+                />
                 <div className='upload-chapter-buttons'>
                     <button className="button" onClick={() => setOpenUpload(!openUpload)}>
-                        <span>Upload chương</span>
+                        <span>Thêm chương</span>
                         {
                             handleIcon()
                         }
@@ -122,36 +133,19 @@ const ListChapter = (props) => {
                     <div className="upload-chapter-options" style={viewUploadMode}>
                         <button onClick = {() => navigate(`/book/info/${props.bookId}/chapter/new`)}>
                             <FaImages className="icon"/> 
-                            <span>Upload theo ảnh</span>
+                            <span>Thêm theo ảnh</span>
                         </button>
-                        <button onClick = {() => navigate(`/book/info/${props.bookId}/pdf/new`)}>
+                        <button 
+                            onClick = {() => 
+                                props.bookPdfStatus?
+                                navigate(`/book/info/${props.bookId}/pdf/new`):
+                                toast.warn("Vui lòng upload pdf sách", {position: toast.POSITION.TOP_CENTER})
+                            }
+                            >
                             <FaFilePdf className="icon"/> 
-                            <span>Upload theo PDF sách</span>
+                            <span>Thêm theo PDF sách</span>
                         </button>
                     </div>
-                </div>
-                <div style={{display: props.chapters.length<=1 ? 'none': (isReorder ? 'none' : 'flex')}}>
-                    <button onClick={() =>(setIsReorder(!isReorder))}>
-                        <span>Thay đổi thứ tự chương</span>
-                    </button>
-                </div>
-                <div style={{display: props.chapters.length<=1 ? 'none': (!isReorder ? 'none' : 'flex'), gap: 10}}>
-                    <button 
-                        onClick={() =>{
-                            saveChaptersReorder(chapterList)
-                            setIsReorder(!isReorder)
-                        }}
-                    >
-                        <span>Lưu thứ tự chương mới</span>
-                    </button>
-                    <button 
-                        onClick={() =>{
-                            setChapterList(originalChapterList)
-                            setIsReorder(!isReorder)
-                        }}
-                    >
-                        <span>Huỷ thay đổi </span>
-                    </button>
                 </div>
             </div>
             <ReactDragListView
@@ -166,7 +160,33 @@ const ListChapter = (props) => {
                         <tr>
                             <th style={{width:"15%"}}>Chương số</th>
                             <th style={{width:"70%"}}>Tên chương</th>
-                            <th style={{width:"15%"}}>&nbsp;</th>
+                            <th style={{width:"15%"}}>
+                                <div style={{display: props.chapters.length<=1 ? 'none': (isReorder ? 'none' : 'flex')}}>
+                                    <button onClick={() =>(setIsReorder(!isReorder))} title="Thay đổi thứ tự chương">
+                                        <CgReorder/>
+                                    </button>
+                                </div>
+                                <div style={{display: props.chapters.length<=1 ? 'none': (!isReorder ? 'none' : 'flex'), gap: 10}}>
+                                    <button 
+                                        onClick={() =>{
+                                            saveChaptersReorder(chapterList)
+                                            setIsReorder(!isReorder)
+                                        }}
+                                        title="Lưu thứ tự chương mới"
+                                    >
+                                        <FaRegSave/>
+                                    </button>
+                                    <button 
+                                        onClick={() =>{
+                                            setChapterList(originalChapterList)
+                                            setIsReorder(!isReorder)
+                                        }}
+                                        title="Huỷ thay đổi"
+                                    >
+                                        <FaRegWindowClose/>
+                                    </button>
+                                </div>
+                            </th>
                         </tr>
                     </thead>
                     <tbody>

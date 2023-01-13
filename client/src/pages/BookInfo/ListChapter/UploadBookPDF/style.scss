@@ -1,0 +1,49 @@
+.upload-book-pdf{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 10px;
+    .file-input-upload{
+        padding: 10px;
+        border-radius: 10px;
+        background-color: #428bca;
+        font-size: 14px;
+        color: white;
+        transition: 0.3s;
+        &:hover{
+            cursor: pointer;
+            background-color: black;
+        }
+    }
+    div{
+        display: flex;
+        flex-direction: row;
+        gap: 10px;
+        button{
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            color: white;
+            transition: 0.3s;
+            cursor: pointer;
+            &:hover{
+                background-color: black;
+            }
+        }
+        .reset{
+            background-color: #0277ff;
+        }
+        .preview{
+            color: black;
+            border: 1px solid black;
+            background-color: white;
+            &:hover{
+                color: white;
+                background-color: black;
+            }
+        }
+        .save{
+            background-color: #5eb95b;
+        }
+    }
+}

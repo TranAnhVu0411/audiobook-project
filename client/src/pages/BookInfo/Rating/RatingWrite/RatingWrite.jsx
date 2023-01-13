@@ -1,7 +1,7 @@
 import React, { useState, useContext} from 'react';
-import {main_axios_instance} from '../../../service/custom-axios';
-import { AuthContext } from "../../../context/AuthContextProvider";
-import { getRole } from '../../../context/role';
+import {main_axios_instance} from '../../../../service/custom-axios';
+import { AuthContext } from "../../../../context/AuthContextProvider";
+import { getRole } from '../../../../context/role';
 import { Rating } from 'react-simple-star-rating'
 import ReactTooltip from 'react-tooltip';
 import { useNavigate } from 'react-router-dom';

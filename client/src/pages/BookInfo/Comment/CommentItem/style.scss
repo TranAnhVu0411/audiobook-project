@@ -27,6 +27,10 @@
             }
             .comment-text{
                 margin: 0px 10px;
+                .warning{
+                    color: gray;
+                    font-style: oblique;
+                }
             }
             .comment-edit{
                 height: 150px;

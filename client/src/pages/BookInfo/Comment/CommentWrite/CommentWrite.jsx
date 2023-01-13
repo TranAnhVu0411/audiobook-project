@@ -2,9 +2,9 @@ import React, {useState, useContext, useEffect} from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import './style.scss';
-import { AuthContext } from "../../../context/AuthContextProvider";
-import { getRole } from '../../../context/role';
-import {main_axios_instance} from '../../../service/custom-axios';
+import { AuthContext } from "../../../../context/AuthContextProvider";
+import { getRole } from '../../../../context/role';
+import {main_axios_instance} from '../../../../service/custom-axios';
 import ReactTooltip from 'react-tooltip';
 import { useNavigate } from 'react-router-dom';
 
