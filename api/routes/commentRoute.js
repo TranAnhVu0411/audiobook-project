@@ -6,5 +6,6 @@ router.post("/create", commentController.create);
 router.put("/update/:id", commentController.update);
 router.get("/book/total/:id", commentController.totalComment);
 router.get("/book/:id", commentController.indexByBook);
+router.get("/all", commentController.index);
 
 module.exports = router;

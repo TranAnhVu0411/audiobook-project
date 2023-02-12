@@ -45,6 +45,27 @@ module.exports = {
             }
         )
     },
+    index: (req, res) => {
+        Comment.find({}, {}, {sort: { 'createdAt' : -1 }}).populate('user').populate('book').then(
+            comments => {
+                let available = [];
+                let unavailable = [];
+                let pending = [];
+                for (let i = 0; i<comments.length; i++){
+                    if (comments[i]['status']==='available'){
+                        available.push(comments[i])
+                    }else if (comments[i]['status']==='unavailable'){
+                        unavailable.push(comments[i])
+                    }else{
+                        pending.push(comments[i])
+                    }
+                }
+                res.status(200).json({available: available, unavailable: unavailable, pending: pending})
+            }
+        ).catch(error => {
+            res.status(500).json({error: error})
+        })
+    },
     indexByBook: (req, res) => {
         Comment.find({book: mongoose.Types.ObjectId(req.params.id)}, {}, {sort: { 'createdAt' : -1 }}).populate('user').then(
             comments => {

@@ -34,9 +34,6 @@ const ReportInfo = (props) => {
                 'status': 'unavailable'
             });
             const infoRes = await main_axios_instance.get(`/user/${props.report.comment.user}`)
-            const userRes = await main_axios_instance.put(`/user/update/${props.report.comment.user}`, {
-                'violatedCount': infoRes.data['user']['violatedCount']+1
-            })
             toast.success("Cập nhật đánh giá thành công", {position: toast.POSITION.TOP_CENTER});
             props.onClose()
             props.handleCommentChange()
@@ -46,6 +43,8 @@ const ReportInfo = (props) => {
         }   
     }
 
+    const disabledButton = props.report.status==='checked'?true:false;
+
     return(
         <div className='report-info'>
             <div className='report-info-section'>
@@ -53,7 +52,7 @@ const ReportInfo = (props) => {
                 <div className='report-info-detail'>
                     <div className='report-info-item'>
                         <label>Người báo cáo:</label>
-                        <div><Link>{props.report.reportedUser.username}</Link></div>
+                        <div><Link to={`/user/${props.report.reportedUser._id}`}>{props.report.reportedUser.username}</Link></div>
                     </div>
                     <div className='report-info-item'>
                         <label>Thời gian báo cáo:</label>
@@ -63,10 +62,22 @@ const ReportInfo = (props) => {
                         <label>Nội dung báo cáo:</label>
                         <div>{props.report.reportContent}</div>
                     </div>
+                    <div className='report-info-comment'>
+                        <label>Nội dung đánh giá</label>
+                        <p
+                            dangerouslySetInnerHTML={{
+                                __html: props.report.comment.comment,
+                            }}
+                        ></p>
+                    </div>
+                    <div className='report-info-link'>
+                        <Link to={`/user/${props.report.comment.user}`}>Thông tin người vi phạm</Link>
+                        <Link to={`/user/${props.report.comment.book}`}>Thông tin sách</Link>
+                    </div>
                 </div>
                 <div className='report-info-button'>
-                    <button onClick={handleHiddenComment}>Ẩn bình luận</button>
-                    <button onClick={handleRemoveReport}>Huỷ báo cáo</button>
+                    <button onClick={handleHiddenComment} disabled={disabledButton}>Ẩn bình luận</button>
+                    <button onClick={handleRemoveReport} disabled={disabledButton}>Huỷ báo cáo</button>
                     <button onClick={props.onClose}>Quay về</button>
                 </div>
             </div>

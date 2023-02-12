@@ -59,4 +59,25 @@ module.exports = {
             res.status(500).json({error: error})
         })
     },
+    index: (req, res) => {
+        Report.find({sort: { 'createdAt' : -1 }}).populate('comment').populate('reportedUser').then(
+            reports => {
+                let notcheckedResult = reports.reduce((notcheckedResult, report) => {
+                    if (report.status === 'notchecked'){
+                        notcheckedResult.push(report)
+                    }
+                    return notcheckedResult
+                }, [])
+                let checkedResult = reports.reduce((checkedResult, report) => {
+                    if (report.status === 'checked'){
+                        checkedResult.push(report)
+                    }
+                    return checkedResult
+                }, [])
+                res.status(200).json({notchecked: notcheckedResult, checked: checkedResult})
+            }
+        ).catch(error => {
+            res.status(500).json({error: error})
+        })
+    }
 }

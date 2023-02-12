@@ -27,12 +27,25 @@
         .report-info-detail{
             display: flex;
             flex-direction: column;
-            gap: 10px;
+            gap: 20px;
             .report-info-item{
                 display: flex;
                 flex-direction: row;
                 justify-content: space-between;
                 gap: 20px;
+            }
+            .report-info-comment{
+                display: flex;
+                flex-direction: column;
+                gap: 20px;
+                p{
+                    word-break: break-all;
+                    white-space: normal;
+                }
+            }
+            .report-info-link{
+                display: flex;
+                flex-direction: column;
             }
         }
         .report-info-button{
