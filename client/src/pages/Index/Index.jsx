@@ -5,7 +5,7 @@ import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import "./style.scss";
 import LoadingScreen from "../../components/LoadingScreen/LoadingScreen";
 import Pagination from 'react-responsive-pagination';
-import '../../util/stylePagination.scss'
+import '../../util/stylePagination.scss';
 import FilterBar from '../../components/ToolBar/FilterBar/FilterBar';
 import SearchBar from '../../components/ToolBar/SearchBar/SearchBar';
 import { AuthContext } from "../../context/AuthContextProvider";
@@ -15,6 +15,7 @@ const Index = () => {
     const [books, setBooks] = useState([]);
     const [pageCount, setPageCount] = useState(0);
     const [isLoad, setIsLoad] = useState(false);
+    // Lấy thông tin url/query
     const location = useLocation();
     const path = location.pathname;
     const searchQuery = location.search;
@@ -35,7 +36,7 @@ const Index = () => {
             const pathList = path.split('/');
             if (pathList.includes('page')){
                 // Nếu trong url chứa page => lấy số trang hiện tại
-                // Nếu không => đặt pageOffset ==1 
+                // Nếu không => đặt pageOffset == 1 
                 currentPage = Number(pathList[pathList.indexOf('page')+1]);
             }
             setPageOffset(currentPage)

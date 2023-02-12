@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from "react";
 import {main_axios_instance} from '../../service/custom-axios';
-import {BiBook, BiBookReader} from "react-icons/bi"
+import {BiBook, BiBookReader, BiLinkExternal} from "react-icons/bi"
+import { Link } from "react-router-dom";
 import "./style.scss"
 
 const DashBoard = () => {
@@ -20,16 +21,22 @@ const DashBoard = () => {
         <div className="dashboard">
             <div className="total">
                 <div className="total-element">
+                    <Link to="/booklist">
+                        <BiLinkExternal className="goto" />
+                    </Link>
                     <BiBook className="icon"/>
                     <h1>Tổng số sách hiện có: {totalBook}</h1>
                 </div>
                 <div className="total-element">
+                    <Link to="/userlist">
+                        <BiLinkExternal className="goto" />
+                    </Link>
                     <BiBookReader className="icon"/>
                     <h1>Tổng số tài khoản đăng ký: {totalUser}</h1>
                 </div>
             </div>
             <div className="report">
-                
+    
             </div>
         </div>
     )

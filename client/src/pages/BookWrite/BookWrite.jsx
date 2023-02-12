@@ -20,8 +20,8 @@ const BookWrite = () => {
     const [title, setTitle] = useState('');
     const [authors, setAuthors] = useState([]);
     const [image, setImage] = useState({
-        imageSave: null,
-        imageShow: noImage
+        file: null,
+        url: noImage
     });
     const [description, setDescription] = useState('');
     const [categories, setCategories] = useState([]);
@@ -64,8 +64,8 @@ const BookWrite = () => {
                     const file = new File([blob], 'temp.png', { contentType })
                     // access file here
                     setImage({
-                        imageSave: file,
-                        imageShow: bookRes.data.image
+                        file: file,
+                        url: bookRes.data.image
                     })
                 })
             }catch(error){
@@ -80,8 +80,8 @@ const BookWrite = () => {
             setDescription('')
             setCategories([])
             setImage({
-                imageSave: null,
-                imageShow: noImage
+                file: null,
+                url: noImage
             })
             setIsLoad(true)
         }else{
@@ -101,8 +101,8 @@ const BookWrite = () => {
             setDescription('')
             setCategories([])
             setImage({
-                imageSave: null,
-                imageShow: noImage
+                file: null,
+                url: noImage
             })
         }else{
             setTitle(book.title)
@@ -125,8 +125,8 @@ const BookWrite = () => {
                 const file = new File([blob], 'temp.png', { contentType })
                 // access file here
                 setImage({
-                    imageSave: file,
-                    imageShow: book.image
+                    file: file,
+                    url: book.image
                 })
             })
         }
@@ -143,8 +143,8 @@ const BookWrite = () => {
     const handlePreviewImage = e => {
         if (e.target.name === 'image'){
             setImage({
-                imageSave: e.target.files[0],
-                imageShow: URL.createObjectURL(e.target.files[0])
+                file: e.target.files[0],
+                url: URL.createObjectURL(e.target.files[0])
             });
         }
     };
@@ -166,8 +166,8 @@ const BookWrite = () => {
     // Xoá ảnh
     const handleDeleteImage = e => {
         setImage({
-            imageSave: null,
-            imageShow: noImage
+            file: null,
+            url: noImage
         })
     };
     // Lưu dữ liệu vào database
@@ -184,14 +184,16 @@ const BookWrite = () => {
                 bookForm.append('categories[]', categories[i].value)
             }   
             bookForm.append('description', description)
-            bookForm.append('image', image.imageSave?image.imageSave:noimage)
+            bookForm.append('image', image.file?image.file:noimage)
             if (path.split('/').includes('new')){
+                // Create new book
                 const res = await main_axios_instance.post("/book/create/", bookForm);
                 setIsUpload(true)
                 console.log(res);
                 toast.success("Thêm sách thành công", {position: toast.POSITION.TOP_CENTER});
                 resetInput();
             }else{
+                // Update book info
                 const res = await main_axios_instance.put(`/book/update/${bookId}`, bookForm);
                 setIsUpload(true)
                 console.log(res);
@@ -201,7 +203,11 @@ const BookWrite = () => {
         }catch(err){
             setIsUpload(true)
             console.log(err)
-            toast.error("Xuất hiện lỗi phát sinh khi thêm sách", {position: toast.POSITION.TOP_CENTER});
+            if (path.split('/').includes('new')){
+                toast.error("Xuất hiện lỗi phát sinh khi thêm sách", {position: toast.POSITION.TOP_CENTER});
+            }else{
+                toast.error("Xuất hiện lỗi phát sinh khi cập nhật sách", {position: toast.POSITION.TOP_CENTER});
+            }
         };
     }
 
@@ -224,7 +230,7 @@ const BookWrite = () => {
                             <label className='upload' htmlFor="image"><FaUpload/> Tải ảnh</label>
                             <button className='delete' onClick={handleDeleteImage}><FaTrash/></button>
                         </div>
-                        <img alt="preview" src={image.imageShow} />
+                        <img alt="preview" src={image.url} />
                     </div>
                     <div className='text-form'>
                         <div className='title-input'>

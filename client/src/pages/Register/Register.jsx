@@ -1,4 +1,4 @@
-import React, { useState} from "react"
+import React, { useState, useEffect } from "react"
 import { useNavigate } from "react-router-dom"
 import noUser from '../../image/noUser.png';
 import {BsFillCameraFill, BsTrashFill} from 'react-icons/bs'
@@ -17,17 +17,19 @@ const Register = () => {
         rewritepassword: ""
     })
     const [image, setImage] = useState({
-        imageSave: null,
-        imageShow: noUser
+        file: null,
+        url: noUser
     });
 
     const [noimage, setNoImage] = useState(null) // Lưu file object ảnh trống
-    fetch(noUser).then(async response => {
-        const contentType = response.headers.get('content-type')
-        const blob = await response.blob()
-        const file = new File([blob], 'temp.png', { contentType })
-        setNoImage(file)
-    })
+    useEffect(() =>{
+        fetch(noUser).then(async response => {
+            const contentType = response.headers.get('content-type')
+            const blob = await response.blob()
+            const file = new File([blob], 'temp.png', { contentType })
+            setNoImage(file)
+        })
+    }, [])
 
     const handleChange = e => {
         setInputs(prev => ({...prev, [e.target.name]: e.target.value}))
@@ -36,16 +38,16 @@ const Register = () => {
     const handlePreviewImage = e => {
         if (e.target.name === 'image'){
             setImage({
-                imageSave: e.target.files[0],
-                imageShow: URL.createObjectURL(e.target.files[0])
+                file: e.target.files[0],
+                url: URL.createObjectURL(e.target.files[0])
             });
         }
     };
 
     const handleDeleteImage = e => {
         setImage({
-            imageSave: null,
-            imageShow: noUser
+            file: null,
+            url: noUser
         })
     }
 
@@ -57,7 +59,7 @@ const Register = () => {
             userForm.append('username', inputs.username);
             userForm.append('email', inputs.email);
             userForm.append('password', inputs.password);
-            userForm.append('avatar', image.imageSave?image.imageSave:noimage);
+            userForm.append('avatar', image.file?image.file:noimage);
 
             const res = await main_axios_instance.post("/auth/register/", userForm);
             console.log(res)
@@ -77,7 +79,7 @@ const Register = () => {
                     <div className="form-input">
                         <div className="input-image">
                             <input type="file" name="image" id="image" accept="image/png, image/jpg, image/jpeg" onChange={handlePreviewImage} style={{display: "none"}}/>
-                            <img alt="preview" src={image.imageShow} />
+                            <img alt="preview" src={image.url} />
                             <label htmlFor="image">
                                 <BsFillCameraFill />
                             </label>
