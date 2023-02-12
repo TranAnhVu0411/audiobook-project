@@ -2,6 +2,7 @@ const mongoose = require('mongoose'),
 User = require('../models/user'),
 Comment = require('../models/comment'),
 Rating = require('../models/rating'),
+Favourite = require('../models/favourite'),
 cloudinary = require("../config/cloudinary");
 
 const roleMapping = {
@@ -25,7 +26,13 @@ module.exports = {
                     comments => {
                         Rating.find({user: req.params.id}).populate('book').then(
                             ratings => {
-                                res.status(200).json({user: user, comments: comments, ratings: ratings});
+                                Favourite.find({user: req.params.id}).populate('book').then(
+                                    favourites => {
+                                        res.status(200).json({user: user, comments: comments, ratings: ratings, favourites: favourites});
+                                    }
+                                ).catch(error => {
+                                    res.status(500).json({error: error})
+                                })
                             }
                         ).catch(error => {
                             res.status(500).json({error: error})

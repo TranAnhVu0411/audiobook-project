@@ -10,6 +10,7 @@ import UserEdit from './UserEdit/UserEdit';
 import LoadingScreen from '../../components/LoadingScreen/LoadingScreen';
 import { AuthContext } from "../../context/AuthContextProvider";
 import RatingList from './RatingList/RatingList';
+import FavouriteList from './FavouriteList/FavouriteList';
 
 const UserInfo = () => {
     const { currentUser } = useContext(AuthContext);
@@ -24,6 +25,7 @@ const UserInfo = () => {
     })
     const [comments, setComments] = useState([])
     const [ratings, setRatings] = useState([])
+    const [favourites, setFavourites] = useState([])
     const location = useLocation();
     const userId = location.pathname.split("/").at(-1);
     const [isLoad, setIsLoad] = useState(false);
@@ -51,6 +53,7 @@ const UserInfo = () => {
             })
             setComments(data.comments)
             setRatings(data.ratings)
+            setFavourites(data.favourites)
         }
         fetchData()
         setIsLoad(true)
@@ -115,7 +118,7 @@ const UserInfo = () => {
                             <RatingList ratings={ratings}/>
                         </TabPanel>
                         <TabPanel>
-                            Favourite
+                            <FavouriteList favourites={favourites} currentUser={currentUser}/>
                         </TabPanel>
                     </Tabs>
                 </div>

@@ -4,7 +4,7 @@ import './style.scss';
 import {getBackgroundColor, getBorderColor} from '../../util/category-color' 
 import {v4 as uuidv4} from "uuid";
 import { AuthContext } from "../../context/AuthContextProvider";
-import { AiOutlineHeart, AiOutlineFileAdd, AiFillStar, AiOutlineComment } from "react-icons/ai"
+import { AiOutlineHeart, AiFillHeart, AiFillStar, AiOutlineComment } from "react-icons/ai"
 import ReactTooltip from 'react-tooltip';
 import { getRole } from '../../context/role';
 import {main_axios_instance} from '../../service/custom-axios';
@@ -79,6 +79,53 @@ const BookCard = (props) => {
             viewMode.width=150;
         }
     }
+
+    const handleFavourite = async(e) => {
+        try{
+            if(props.favouriteList.includes(props.book._id)){
+                const res = await main_axios_instance.delete(`/favourite/delete?book=${props.book._id}&user=${currentUser.info._id}`);
+                console.log(res)
+                props.handleFavouriteList(props.book._id, 'delete')
+            }else{
+                const res = await main_axios_instance.post('/favourite/create', {book: props.book._id, user: currentUser.info._id});
+                console.log(res)
+                props.handleFavouriteList(props.book._id, 'create')
+            }
+        }catch(error){
+            console.log(error)
+        }
+    }
+    const HandleFavouriteIcon = () => {
+        if (props.favouriteList.includes(props.book._id)){
+            return <AiFillHeart/>
+        }else{
+            return <AiOutlineHeart/>
+        }
+    }
+
+    const HandleBookcardButton = () => {
+        if (getRole(currentUser) === 'guest'){
+            return (
+                <>
+                    <button data-tip data-for="bookcard-tooltip" onClick = {() => navigate('/login')}>
+                        <AiOutlineHeart/>
+                    </button>
+                    <ReactTooltip id='bookcard-tooltip' effect="solid">
+                        <span>Bạn phải đăng nhập để có thể sử dụng chức năng này</span>
+                    </ReactTooltip>
+                </>
+            )
+        }else if (getRole(currentUser) === 'user'){
+            return(
+                <button onClick={handleFavourite}>
+                    <HandleFavouriteIcon/>
+                </button>
+            )
+        }else{
+            return(<></>)
+        }
+    }
+
     return (
         <div className="book-card" style={viewMode}> 
             <Link className='book-image' to={`/book/info/${props.book._id}`}>
@@ -133,21 +180,7 @@ const BookCard = (props) => {
                 </div>
             </div>
             <div className='book-card-button'>
-                {getRole(currentUser) === 'guest' ? (
-                    <>
-                        <button data-tip data-for="bookcard-tooltip" onClick = {() => navigate('/login')}>
-                            <AiOutlineHeart/>
-                        </button>
-                        <ReactTooltip id='bookcard-tooltip' effect="solid">
-                            <span>Bạn phải đăng nhập để có thể sử dụng chức năng này</span>
-                        </ReactTooltip>
-                    </>
-                ) : (
-                    <button>
-                        {getRole(currentUser)!=='admin' ? <AiOutlineHeart/> : <AiOutlineFileAdd/>}
-                    </button>
-                )}    
-                
+                <HandleBookcardButton/>
             </div>
         </div>
     )

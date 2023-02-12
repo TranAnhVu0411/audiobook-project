@@ -4,9 +4,11 @@ import {main_axios_instance, pdf_axios_instance} from '../../service/custom-axio
 import "./style.scss";
 import {getBackgroundColor, getBorderColor} from '../../util/category-color'; 
 import LoadingScreen from "../../components/LoadingScreen/LoadingScreen";
+import { AiOutlineHeart, AiFillHeart } from "react-icons/ai"
 import {v4 as uuidv4} from "uuid";
 import { AuthContext } from "../../context/AuthContextProvider";
 import { getRole } from "../../context/role";
+import ReactTooltip from 'react-tooltip';
 
 import CommentWrite from "./Comment/CommentWrite/CommentWrite";
 import CommentList from "./Comment/CommentList/CommentList";
@@ -47,6 +49,8 @@ const BookInfo = () => {
     })
     const [reports, setReport] = useState([])
 
+    // Thông tin yêu thích (true là đã thích, false là chưa thích)
+    const [isFavourite, setIsFavourtite] = useState(false)
 
     const [isLoad, setIsLoad] = useState(false);
     
@@ -79,6 +83,14 @@ const BookInfo = () => {
             const bookRatingRes = await main_axios_instance.get(`/rating/book/${bookId}`)
             setBookRating(bookRatingRes.data)
 
+            // Lấy thông tin sách yêu thích
+            if (getRole(currentUser)!=='guest'){
+                const favouriteRes = await main_axios_instance.get(`/favourite/check?book=${bookId}${currentUser===null?'':`&user=${currentUser.info._id}`}`)
+                setIsFavourtite(favouriteRes.data['favourite'])
+            }else{
+                setIsFavourtite(false)
+            }
+            
             // Lấy thông tin chương
             const chaptersRes = await pdf_axios_instance.get(`/books/${bookId}`)
             setChapters(chaptersRes.data['chapters'])
@@ -199,6 +211,53 @@ const BookInfo = () => {
         setChangePdf(true)
     }
 
+    // Xử lý hiển thị nút Favourite
+    const HandleFavouriteIcon = () => {
+        if (isFavourite){
+            return (<><AiFillHeart style={{color: "white"}}/><span>Bỏ yêu thích</span></>)
+        }else{
+            return (<><AiOutlineHeart style={{color: "crimson"}}/><span>Yêu thích</span></>)
+        }
+    }
+
+    const handleFavourite = async(e) => {
+        try{
+            if(isFavourite){
+                const res = await main_axios_instance.delete(`/favourite/delete?book=${bookId}&user=${currentUser.info._id}`);
+                console.log(res)
+            }else{
+                const res = await main_axios_instance.post('/favourite/create', {book: bookId, user: currentUser.info._id});
+                console.log(res)
+            }
+            setIsFavourtite(!isFavourite)
+        }catch(error){
+            console.log(error)
+        }
+    }
+
+    const HandleFavouriteButton = () => {
+        if (getRole(currentUser) === 'guest'){
+            return (
+                <>
+                    <button style={{backgroundColor: "white", border: "1px solid crimson", color: "crimson"}} data-tip data-for="bookcard-tooltip" onClick = {() => navigate('/login')}>
+                        <AiOutlineHeart/> <span>Yêu thích</span>
+                    </button>
+                    <ReactTooltip id='bookcard-tooltip' effect="solid">
+                        <span>Bạn phải đăng nhập để có thể sử dụng chức năng này</span>
+                    </ReactTooltip>
+                </>
+            )
+        }else if (getRole(currentUser) === 'user'){
+            return(
+                <button style={isFavourite?{backgroundColor: "crimson", border: "1px solid white", color: "white"}:{backgroundColor: "white", border: "1px solid crimson", color: "crimson"}} onClick={handleFavourite}>
+                    <HandleFavouriteIcon/>
+                </button>
+            )
+        }else{
+            return(<></>)
+        }
+    }
+
     if (isLoad){
         return(
             <div className="book-info">
@@ -247,6 +306,7 @@ const BookInfo = () => {
                                 ) : (<></>
                                 )
                             }
+                            <HandleFavouriteButton/>
                         </div>
                     </div>
                 </div>

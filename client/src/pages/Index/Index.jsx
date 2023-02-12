@@ -24,6 +24,8 @@ const Index = () => {
     const [pageOffset, setPageOffset] = useState(1);
     const [totalItem, setTotalItem] = useState(0);
     const navigate = useNavigate();
+    // Danh sách sách ưa thích
+    const [favouriteList, setFavouriteList] = useState([])
 
     // Kiểm tra người dùng là user hay admin
     const { currentUser } = useContext(AuthContext);
@@ -39,24 +41,29 @@ const Index = () => {
                 // Nếu không => đặt pageOffset == 1 
                 currentPage = Number(pathList[pathList.indexOf('page')+1]);
             }
+            let bookSearchQuery = searchQuery==="" ? "?" : `${searchQuery}&`
+            let bookFavouriteQuery = currentUser===null?"":`userId=${currentUser.info._id}&`
+            let pageQuery = `page=${pageOffset}`
+
             setPageOffset(currentPage)
             if (getRole(currentUser) !== "admin"){
                 // Nếu người truy cập là user/guest
                 if (pathList.includes('category')){
                     // Nếu được truy cập thông qua category
                     const category = path.split("/")[3];
-                    res = await main_axios_instance.get(`/book/category/${category}${searchQuery==="" ? "?" : `${searchQuery}&`}page=${pageOffset}`);
+                    res = await main_axios_instance.get(`/book/category/${category}${bookSearchQuery}${bookFavouriteQuery}${pageQuery}`);
                 }else{
                     // Nếu được truy cập thông qua advance-search
-                    res = await main_axios_instance.get(`/book/find${searchQuery==="" ? "?" : `${searchQuery}&`}page=${pageOffset}`);
+                    res = await main_axios_instance.get(`/book/find${bookSearchQuery}${bookFavouriteQuery}${pageQuery}`);
                 }
             }else{
                 // Nếu người truy cập là admin
-                res = await main_axios_instance.get(`/book/find${searchQuery==="" ? "?" : `${searchQuery}&`}page=${pageOffset}`);
+                res = await main_axios_instance.get(`/book/find${bookSearchQuery}${bookFavouriteQuery}${pageQuery}`);
             }
             setBooks(res.data.books);
             setTotalItem(res.data.total);
             setPageCount(res.data.pageCount);
+            setFavouriteList(res.data.favouriteBookId)
             setIsLoad(true);
           } catch (err) {
             console.log(err);
@@ -92,6 +99,18 @@ const Index = () => {
         }
     }
 
+    // Xử lý sách yêu thích
+    const handleFavouriteList = (bookId, type) => {
+        if (type==="delete"){
+            setFavouriteList([...favouriteList.filter(id => {
+                return id !== bookId;
+              }),
+            ])
+        }else if (type==="create"){
+            setFavouriteList([...favouriteList, bookId])
+        }
+    }
+
     if (isLoad){
         return (
             <div className='index'>
@@ -102,7 +121,7 @@ const Index = () => {
                     {totalItem} kết quả  
                 </div>
                 <div className='book-table'>
-                    <BookTable books={books} />
+                    <BookTable books={books} favouriteList={favouriteList} handleFavouriteList={handleFavouriteList}/>
                 </div>
                 <Pagination
                     total={pageCount}

@@ -1,5 +1,6 @@
 const mongoose = require('mongoose'),
 Book = require('../models/book'),
+Favourite = require('../models/favourite'),
 cloudinary = require("../config/cloudinary"),
 getBookParams = body => {
     return {
@@ -92,7 +93,27 @@ module.exports = {
     indexCurrent: (req, res) => {
         Book.find({}, {}, { sort: { 'createdAt' : -1 }}).limit(9).then(
             books => {
-                res.status(200).json(books);
+                if(req.query.userId !==undefined){
+                    let promiseList = []
+                    for (let i = 0; i < books.length; i++){
+                        promiseList.push(Favourite.find({book: books[i]._id, user: req.query.userId}))
+                    }
+                    Promise.all(promiseList).then((result) => {
+                        favouriteBookId = []
+                        for (let i = 0; i < result.length; i++){
+                            if (result[i].length !== 0){
+                                favouriteBookId.push(result[i][0].book)
+                            }
+                        }
+                        res.status(200).json({books: books, favouriteBookId: favouriteBookId});
+                      }).catch(
+                        error => {
+                            res.status(500).json(error);
+                        }
+                      )
+                }else{
+                    res.status(200).json({books: books, favouriteBookId: []});
+                }
             }
         ).catch(
             error => {
@@ -132,7 +153,27 @@ module.exports = {
             books => {
                 Book.countDocuments(categorySearch).then(
                     count => {
-                        res.status(200).json({books: books, pageCount: Math.ceil(count / perPage), total: count});
+                        if(req.query.userId !==undefined){
+                            let promiseList = []
+                            for (let i = 0; i < books.length; i++){
+                                promiseList.push(Favourite.find({book: books[i]._id, user: req.query.userId}))
+                            }
+                            Promise.all(promiseList).then((result) => {
+                                favouriteBookId = []
+                                for (let i = 0; i < result.length; i++){
+                                    if (result[i].length !== 0){
+                                        favouriteBookId.push(result[i][0].book)
+                                    }
+                                }
+                                res.status(200).json({books: books, pageCount: Math.ceil(count / perPage), total: count, favouriteBookId: favouriteBookId});
+                              }).catch(
+                                error => {
+                                    res.status(500).json(error);
+                                }
+                              )
+                        }else{
+                            res.status(200).json({books: books, pageCount: Math.ceil(count / perPage), total: count, favouriteBookId: []});
+                        }
                     }
                 ).catch(
                     error => {

@@ -6,7 +6,7 @@ const BookTable = (props) => {
     return (
         <div className='book-table'>
             {props.books.map(book => {
-                return <BookCard key={book._id} book={book}/>
+                return <BookCard key={book._id} book={book} favouriteList={props.favouriteList} handleFavouriteList={props.handleFavouriteList}/>
             })}
         </div>
     )

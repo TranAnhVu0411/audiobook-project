@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, {useState, useEffect, useContext} from 'react';
 import BookCard from "../../components/BookCard/BookCard";
 import {BsCloudArrowDown} from 'react-icons/bs'
 import Slider from "react-slick";
@@ -9,14 +9,18 @@ import { imgUrl } from "../../util/header-image";
 import "./style.scss";
 import LoadingScreen from "../../components/LoadingScreen/LoadingScreen";
 import {main_axios_instance} from '../../service/custom-axios';
+import { AuthContext } from "../../context/AuthContextProvider";
 const Home = () => {
+    const { currentUser } = useContext(AuthContext);
     const [recentBooks, setRecentBooks] = useState([]);
     const [isLoad, setIsLoad] = useState(false);
+    const [favouriteList, setFavouriteList] = useState([])
     useEffect(() => {
         const fetchData = async () => {
           try {
-            const res = await main_axios_instance.get(`/book/recent`);
-            setRecentBooks(res.data);
+            const res = await main_axios_instance.get(`/book/recent${currentUser===null?"":`?userId=${currentUser.info._id}`}`);
+            setRecentBooks(res.data.books);
+            setFavouriteList(res.data.favouriteBookId);
             setIsLoad(true);
           } catch (err) {
             console.log(err);
@@ -24,6 +28,18 @@ const Home = () => {
         };
         fetchData();
     }, []);
+
+    // Xử lý sách yêu thích
+    const handleFavouriteList = (bookId, type) => {
+        if (type==="delete"){
+            setFavouriteList([...favouriteList.filter(id => {
+                return id !== bookId;
+              }),
+            ])
+        }else if (type==="create"){
+            setFavouriteList([...favouriteList, bookId])
+        }
+    }
 
     if (isLoad){
         return (
@@ -52,7 +68,14 @@ const Home = () => {
                         <Slider {...sectionSettings(recentBooks.length)}>
                         {
                             recentBooks.map(book => {
-                                return <BookCard key={book._id} book={book}/>
+                                return( 
+                                    <BookCard 
+                                        key={book._id} 
+                                        book={book} 
+                                        favouriteList={favouriteList} 
+                                        handleFavouriteList={handleFavouriteList}
+                                    />
+                                )
                             })
                         }
                         </Slider>
