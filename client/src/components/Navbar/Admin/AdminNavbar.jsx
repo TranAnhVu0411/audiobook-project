@@ -86,7 +86,7 @@ const AdminNavbar = (props) => {
                     </Link>
                 </div>
             </div>
-            <Link className="nav-link" to="#">
+            <Link className="nav-link" to="/userlist">
                 <MdOutlineSupervisedUserCircle className="icon"/>
                 <h6>Quản lý tài khoản</h6>
             </Link>
