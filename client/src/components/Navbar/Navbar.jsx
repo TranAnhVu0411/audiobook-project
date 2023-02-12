@@ -2,7 +2,6 @@ import React, {useState, useEffect, useContext} from "react";
 import { Link, useLocation } from "react-router-dom";
 import Logo from "../../image/logo.png";
 import { BsPencilSquare, BsInfoCircle} from 'react-icons/bs'
-import { BiBookHeart } from 'react-icons/bi'
 import { FaList } from "react-icons/fa";
 import { MdClose, MdLogin, MdLogout} from "react-icons/md";
 import {GoTriangleDown, GoTriangleUp} from 'react-icons/go'
@@ -88,14 +87,9 @@ const Avatar = (props) => {
                 }
             </button>
             <div className='avatar-content' style={viewAvtMode} onMouseOver={handleMouseOverAvt} onMouseOut={handleMouseOutAvt}>
-                <Link className="avatar-link" to = '/'>
+                <Link className="avatar-link" to = {`/user/${props.currentUser.info._id}`}>
                     <BsInfoCircle className="icon"/> 
                     <span>Thông tin</span>
-                </Link>
-                <Link className="avatar-link" to = '/'
-                style={(props.currentUser.info.role==="admin") ? {display: 'none'} : {display: 'flex'}}>
-                    <BiBookHeart className="icon"/> 
-                    <span>Sách yêu thích</span>
                 </Link>
                 <Link className="avatar-link" onClick={handleLogout} to = '/'>
                     <MdLogout className="icon"/> 

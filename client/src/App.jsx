@@ -23,6 +23,8 @@ import PageEdit from './pages/PageEdit/PageEdit';
 import ChapterEdit from './pages/ChapterEdit/ChapterEdit';
 import AudioBook from './pages/AudioBook/AudioBook';
 import { Worker } from '@react-pdf-viewer/core';
+import UserInfo from './pages/UserInfo/UserInfo';
+import UserList from './pages/UserList/UserList';
 
 function App() {
   return (
@@ -42,6 +44,7 @@ function App() {
               <Route path="/book/advance-search/page/:page" element={<Index />} />
               <Route path="/book/advance-search" element={<Index />} />
               <Route path="/chapter/:id" element={<AudioBook />} />
+              <Route path="/user/:id" element={<UserInfo />} />
               <Route element={<AuthContextRequirement role={['admin']} />}>
                   <Route path="/dashboard" element={<DashBoard />} />
                   <Route path="/book/new" element={<BookWrite />} /> 
@@ -52,6 +55,8 @@ function App() {
                   <Route path="/chapter/:id/edit" element={<ChapterEdit/>}/>
                   <Route path="/page/:id/edit" element={<PageEdit />} />
                   <Route path="/book/info/:id/update" element={<BookWrite />} /> 
+                  <Route path="/userlist" element={<UserList />} />
+                  <Route path="/userlist/page/:page" element={<UserList />} />
               </Route>
               <Route path="/" element={<Home />} />
               <Route path="*" element={<Error />}/>

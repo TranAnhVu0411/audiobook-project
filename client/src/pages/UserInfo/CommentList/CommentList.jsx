@@ -1,4 +1,5 @@
 import React, { Fragment } from 'react';
+import { Link } from 'react-router-dom';
 import './style.scss';
 import moment from "moment";
 
@@ -14,8 +15,12 @@ const CommentList = (props) => {
                     <Fragment key={comment._id}>
                         <div className='comment-info-item'>
                             <div className='comment-book-info'>
+                            <Link className='comment-link' to={`/book/info/${comment.book._id}`}>
                                 <img src={comment.book.image}/>
+                            </Link>
+                            <Link className='comment-link' to={`/book/info/${comment.book._id}`}>
                                 <h4>{comment.book.title}</h4>
+                            </Link>
                             </div>
                             <div className='comment-info'>
                                 <p
