@@ -104,8 +104,13 @@ const SearchBar = (props) => {
                 checkedCategory.push(cat2url[category.id])
             }
         })
-        const categoryQuery = checkedCategory.length===0 ? '' : `cat=${checkedCategory.toString()}`
-        navigate(`${newPath}?${categoryQuery}&sort=${filter.value}`)
+        let categoryQuery = checkedCategory.length===0 ? '' : `cat=${checkedCategory.toString()}`
+        let queryList = [];
+        if (categoryQuery!==''){
+            queryList.push(categoryQuery)
+        }
+        queryList.push(`sort=${filter.value}`)
+        navigate(`${newPath}?${queryList.join('&')}`)
     }
 
     // Xử lý reset button
