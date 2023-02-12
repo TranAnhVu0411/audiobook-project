@@ -27,6 +27,10 @@
             }
             .comment-text{
                 margin: 0px 10px;
+                p{
+                    word-break: break-all;
+                    white-space: normal;
+                }
                 .warning{
                     color: gray;
                     font-style: oblique;
