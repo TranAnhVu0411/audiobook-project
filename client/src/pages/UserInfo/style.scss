@@ -1,0 +1,73 @@
+.user-info{
+    display: flex;
+    margin-top: 20px;
+    .user-info-detail{
+        border-radius: 25px;
+        background-color: white;
+        padding: 10px;
+        display: flex;
+        align-items: center;
+        img{
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            object-fit: fill;
+            border: 2px solid teal
+        }
+        button{
+            padding: 10px;
+            border: none;
+            background-color: teal;
+            border-radius: 10px;
+            cursor: pointer;
+            color: white;
+            transition: 0.3s;
+            &:hover{
+                background-color: black;
+            }
+        }
+        .user-text-info{
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            .user-text{
+                display: flex;
+                flex-direction: row;
+                gap: 10px;
+            }
+        }
+        @media only screen and (max-width: 992px) {
+            flex-direction: row;
+            gap: 25px;
+        }
+        @media only screen and (min-width: 992px) {
+            flex-direction: column;
+            gap: 20px;
+        }
+    }
+    @media only screen and (max-width: 992px) {
+        flex-direction: column;
+        gap: 25px;
+    }
+    @media only screen and (min-width: 992px) {
+        flex-direction: row;
+        gap: 20px;
+        .user-info-detail{
+            flex:3;
+        }
+        .user-info-other{
+            flex: 6
+        }
+    }
+    .user-info-other{
+        border-radius: 25px;
+        background-color: white;
+        padding: 10px;
+        .tab-header{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            gap: 5px;
+        }
+    }
+}

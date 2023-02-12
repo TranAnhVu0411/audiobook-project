@@ -1,0 +1,126 @@
+.user-edit{
+    z-index: 1;
+    display: flex;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: rgba(0,0,0,0.9);
+    flex-direction: column;
+    justify-content: space-between;
+    box-sizing: border-box;
+
+    .user-edit-form{
+        z-index: 1;
+        padding: 20px;
+        border-radius: 10px;
+        background-color: white;
+        position: absolute; 
+        left: 50%; 
+        top: 50%; 
+        transform: translate(-50%, -50%); 
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        h2{
+            justify-self: flex-start;
+        }
+        .user-form-input{
+            justify-content: center;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            .user-image-input{
+                align-self: center;
+                height: 200px;
+                width: 200px;
+                border: 3px solid teal;
+                border-radius: 50%;
+                position: relative;
+                img{
+                    position: absolute;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    width: 200px;
+                    height: 200px;
+                    border-radius: 50%;
+                    object-fit: fill;
+                }
+                label{
+                    font-size: 20px;
+                    padding: 18px;
+                    border-radius: 50%;
+                    border: none;
+                    cursor: pointer;
+                    background-color: teal;
+                    color: white;
+                    box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),
+                                            0px 6px 10px 0px rgba(0, 0, 0, 0.14), 
+                                            0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+                    transition: 0.3s;
+                    position: absolute;
+                    bottom: 0px;
+                    right: 0px;
+                    z-index: 1;
+                    &:hover{
+                        background-color: black;
+                    }
+                }
+                button{
+                    font-size: 20px;
+                    padding: 18px;
+                    border-radius: 50%;
+                    border: none;
+                    cursor: pointer;
+                    background-color: orangered;
+                    color: white;
+                    box-shadow: 0px 3px 5px -1px rgba(0, 0, 0, 0.2),
+                                            0px 6px 10px 0px rgba(0, 0, 0, 0.14), 
+                                            0px 1px 18px 0px rgba(0, 0, 0, 0.12);
+                    transition: 0.3s;
+                    position: absolute;
+                    bottom: 0px;
+                    left: 0px;
+                    &:hover{
+                        background-color: black;
+                    }
+                }
+            }
+            .user-name-input{
+                display: flex;
+                flex-direction: row;
+                align-items: center;
+                gap: 10px;
+                input{
+                    font-size: 16px;
+                    width: 100%;
+                    height: 36px;
+                } 
+            }
+        }
+        .user-edit-button{
+            justify-content: flex-end;
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            button{
+                border: none;
+                padding: 10px;
+                border-radius: 5px;
+                transition: 0.3s;
+                color: white;
+                &:hover{
+                    background-color: black;
+                }
+            }
+            .cancel{
+                background-color: red;
+            }
+            .update{
+                background-color: teal;
+            }
+        }
+    }
+}
