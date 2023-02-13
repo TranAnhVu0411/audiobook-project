@@ -79,5 +79,14 @@ module.exports = {
         ).catch(error => {
             res.status(500).json({error: error})
         })
+    },
+    indexCurrent: (req, res) => {
+        Report.find({status: 'notchecked'}, {}, { sort: { 'createdAt' : -1 }}).limit(9).populate('comment').populate('reportedUser').then(
+            reports => {
+                res.status(200).json({reports: reports})
+            }
+        ).catch(error => {
+            res.status(500).json({error: error})
+        })
     }
 }
