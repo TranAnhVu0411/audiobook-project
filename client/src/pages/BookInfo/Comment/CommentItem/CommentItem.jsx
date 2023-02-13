@@ -5,6 +5,9 @@ import { getRole } from '../../../../context/role';
 import CommentWrite from '../CommentWrite/CommentWrite';
 import ReportForm from '../Report/ReportForm/ReportForm';
 import ReportInfo from '../Report/ReportInfo/ReportInfo';
+import {main_axios_instance} from '../../../../service/custom-axios';
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 import moment from "moment";
 
 const CommentItem = (props) => {
@@ -79,9 +82,31 @@ const CommentItem = (props) => {
         }
     }
 
-    const handleCommentRedirect = () => {
+    const handleCommentRedirect = async () => {
         if (props.comment.status==='pending'){
             setReportInfoView(true)
+        }else if(props.comment.status==='available'){
+            try {
+                const commentRes = await main_axios_instance.put(`/comment/update/${props.comment._id}`, {
+                    'status': 'unavailable'
+                });
+                toast.success("Cập nhật đánh giá thành công", {position: toast.POSITION.TOP_CENTER});
+                props.handleCommentChange()
+            }catch(error){
+                console.log(error);
+                toast.error("Xuất hiện lỗi phát sinh khi cập nhật đánh giá", {position: toast.POSITION.TOP_CENTER});
+            }
+        }else{
+            try {
+                const commentRes = await main_axios_instance.put(`/comment/update/${props.comment._id}`, {
+                    'status': 'available'
+                });
+                toast.success("Cập nhật đánh giá thành công", {position: toast.POSITION.TOP_CENTER});
+                props.handleCommentChange()
+            }catch(error){
+                console.log(error);
+                toast.error("Xuất hiện lỗi phát sinh khi cập nhật đánh giá", {position: toast.POSITION.TOP_CENTER});
+            }
         }
     }
 

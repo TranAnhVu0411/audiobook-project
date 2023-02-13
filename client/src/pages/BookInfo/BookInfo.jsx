@@ -167,7 +167,6 @@ const BookInfo = () => {
     useEffect(() => {
         const fetchCommentData = async () => {
             try {
-                setCommentFilter(filterOptions[0])
                 const commentRes = await main_axios_instance.get(`/comment/book/${bookId}`)
                 setComments(commentRes.data)
             } catch (err) {

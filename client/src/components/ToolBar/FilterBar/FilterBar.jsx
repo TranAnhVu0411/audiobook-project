@@ -23,8 +23,6 @@ const FilterBar = (props) => {
     const filterOptions = [  
         { value: 0, label: 'Mới nhất' },
         { value: 1, label: 'Cũ nhất' },
-        // { value: 2, label: 'Rating cao nhất' },
-        // { value: 3, label: 'Rating thấp nhất' },
     ];
     if (props.searchParams.get('sort')!==null){
         filterType = Number(props.searchParams.get('sort'));

@@ -3,9 +3,6 @@ import { Link } from 'react-router-dom';
 import Select from 'react-select';
 import './style.scss';
 import moment from "moment";
-import { toast } from "react-toastify";
-import 'react-toastify/dist/ReactToastify.css';
-import {main_axios_instance} from '../../../service/custom-axios';
 import ReportInfo from '../../BookInfo/Comment/Report/ReportInfo/ReportInfo';
 
 const ReportList = (props) => {
