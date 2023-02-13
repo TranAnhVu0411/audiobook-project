@@ -8,7 +8,8 @@ const userSchema = new Schema({
     },
     email: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     password: {
         type: String,
@@ -27,11 +28,6 @@ const userSchema = new Schema({
     status: {
         type: String,
         default: 'available',
-        required: true
-    },
-    violatedCount: {
-        type: Number,
-        default: 0,
         required: true
     }
 },{

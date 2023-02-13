@@ -5,6 +5,8 @@ import {BsFillCameraFill, BsTrashFill} from 'react-icons/bs'
 import {main_axios_instance} from '../../service/custom-axios';
 import './style.scss'
 import LoadingScreen from "../../components/LoadingScreen/LoadingScreen";
+import { toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css';
 
 const Register = () => {
     const [isUpload, setIsUpload] = useState(true); // Phục vụ cho upload dữ liệu lúc write/update
@@ -52,22 +54,29 @@ const Register = () => {
     }
 
     const handleSubmit = async e => {
-        setIsUpload(false)
         e.preventDefault();
         try{
-            let userForm = new FormData();
-            userForm.append('username', inputs.username);
-            userForm.append('email', inputs.email);
-            userForm.append('password', inputs.password);
-            userForm.append('avatar', image.file?image.file:noimage);
+            if (inputs.password===inputs.rewritepassword){
+                setIsUpload(false)
+                let userForm = new FormData();
+                userForm.append('username', inputs.username);
+                userForm.append('email', inputs.email);
+                userForm.append('password', inputs.password);
+                userForm.append('avatar', image.file?image.file:noimage);
 
-            const res = await main_axios_instance.post("/auth/register/", userForm);
-            console.log(res)
-            if (res && res.data && res.data.accessToken) {
-                setIsUpload(true);
-                navigate('/login');
+                const res = await main_axios_instance.post("/auth/register/", userForm);
+                console.log(res)
+                if (res && res.data && res.data.accessToken) {
+                    setIsUpload(true);
+                    navigate('/login');
+                }
+            }else{
+                throw new Error('Mật khẩu nhập lại không đúng');
             }
         }catch(err){
+            if (err.message === "Mật khẩu nhập lại không đúng"){
+                toast.error("Mật khẩu nhập lại không đúng", {position: toast.POSITION.TOP_CENTER});
+            }
             console.log(err)
         }
     }
