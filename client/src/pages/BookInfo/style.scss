@@ -132,6 +132,10 @@
         h2{
             margin: 0;
         }
+        .result-number{
+            font-size: 20px;
+            border-bottom: 1px solid black;
+        }
         .seperator-comment-section{
             border-top: 1px solid black;
             @media only screen and (max-width: 768px) {

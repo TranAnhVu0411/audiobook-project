@@ -7,50 +7,37 @@ import { toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 import {main_axios_instance} from '../../../service/custom-axios';
 import ReportInfo from '../../BookInfo/Comment/Report/ReportInfo/ReportInfo';
+import Pagination from 'react-responsive-pagination';
+import '../../../util/stylePagination.scss';
 
 const CommentList = (props) => {
+    // Thay đổi filter
     const filterOptions = [  
         { value: 0, label: 'Comment chưa bị báo cáo' },
         { value: 1, label: 'Comment bị báo cáo' },
         { value: 2, label: 'Comment bị ẩn' },
     ];
-    const [filter, setFilter] = useState(filterOptions[0])
-    const [showComments, setShowComments] = useState(props.comments['available'])
-    useEffect(() => {
-        console.log(filter)
-        if (filter.value===0){
-            setShowComments(props.comments['available'])
-        }else if (filter.value===1){
-            setShowComments(props.comments['pending'])
-        }else{
-            setShowComments(props.comments['unavailable'])
-        }
-        // setShowComments(props.comments['available'])
-    }, [props.comments])
 
-    const handleFilter = currentFilter => {
-        if (currentFilter.value===0){
-            setShowComments(props.comments['available'])
-        }else if (currentFilter.value===1){
-            setShowComments(props.comments['pending'])
-        }else{
-            setShowComments(props.comments['unavailable'])
-        }
-        setFilter(currentFilter);
+    const handleFilter = filter => {
+        props.handleCommentQuery(1, filter.value)
+        props.handleCommentChange()
     }
-    console.log(props.comments)
+    
+    // Thay đổi page
+    const handlePageChange = page => {
+        props.handleCommentQuery(page, props.filter)
+        props.handleCommentChange()
+    };
 
     const [reportInfoView, setReportInfoView] = useState(false);
     const [report, setReport] = useState(null);
-    const handleCommentRedirect = async (id) => {
-        if (filter.value === 1){
+    const handleCommentRedirect = async (comment) => {
+        if (props.filter === 1){
             setReportInfoView(true)
-            setReport(props.reports.filter(report =>{
-                return report.comment._id === id
-            })[0])
-        }else if(filter.value === 0){
+            setReport(comment.report)
+        }else if(props.filter === 0){
             try {
-                const commentRes = await main_axios_instance.put(`/comment/update/${id}`, {
+                const commentRes = await main_axios_instance.put(`/comment/update/${comment.comment._id}`, {
                     'status': 'unavailable'
                 });
                 toast.success("Cập nhật đánh giá thành công", {position: toast.POSITION.TOP_CENTER});
@@ -61,7 +48,7 @@ const CommentList = (props) => {
             }
         }else{
             try {
-                const commentRes = await main_axios_instance.put(`/comment/update/${id}`, {
+                const commentRes = await main_axios_instance.put(`/comment/update/${comment.comment._id}`, {
                     'status': 'available'
                 });
                 toast.success("Cập nhật đánh giá thành công", {position: toast.POSITION.TOP_CENTER});
@@ -75,16 +62,27 @@ const CommentList = (props) => {
 
     return (
         <div className='comment-management-list'>
-            <div className='filter-config'>
+            <div className='query-config'>
+                <div className='filter-config'>
                 <span>Lọc comment theo:</span>
-                <Select
-                    className="filter-options"
-                    classNamePrefix="select"
-                    name="color"
-                    options={filterOptions}
-                    value={filter}
-                    onChange = {handleFilter}
+                    <Select
+                        className="filter-options"
+                        classNamePrefix="select"
+                        name="color"
+                        options={filterOptions}
+                        value={filterOptions[props.filter]}
+                        onChange = {handleFilter}
+                    />
+                </div>
+                <Pagination
+                    className='pagination'
+                    total={props.pageCount}
+                    current={props.pageOffset}
+                    onPageChange={page => {handlePageChange(page)}}
                 />
+            </div>
+            <div className='result-number'>
+                {props.totalItem} kết quả  
             </div>
             <div className='comment-table'>
                 <table>
@@ -98,34 +96,34 @@ const CommentList = (props) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {showComments.map((comment) => {
+                        {props.comments.map((comment) => {
                             return(
-                            <tr key={comment._id}>
+                            <tr key={comment.comment._id}>
                                 <td>
-                                    <Link to={`/book/${comment.book._id}`}>
-                                        {comment.book.title}
+                                    <Link to={`/book/${comment.comment.book._id}`}>
+                                        {comment.comment.book.title}
                                     </Link>
                                 </td>
                                 <td>
-                                    <Link to={`/user/${comment.user._id}`}>
-                                        {comment.user.username}
+                                    <Link to={`/user/${comment.comment.user._id}`}>
+                                        {comment.comment.user.username}
                                     </Link>
                                 </td>
                                 <td>
                                     <p
                                         dangerouslySetInnerHTML={{
-                                            __html: comment.comment,
+                                            __html: comment.comment.comment,
                                         }}
                                     ></p>
                                 </td>
-                                <td>{moment(comment.updatedAt).format("DD/MM/YY HH:mm")}</td>
+                                <td>{moment(comment.comment.updatedAt).format("DD/MM/YY HH:mm")}</td>
                                 <td>
-                                    <button onClick={() => handleCommentRedirect(comment._id)}>
+                                    <button onClick={() => handleCommentRedirect(comment)}>
                                         <span>
                                             {
-                                            (filter.value===0)?
+                                            (props.filter===0)?
                                                 "Ẩn comment":
-                                                (filter.value===2)?"Hiện comment":
+                                                (props.filter===2)?"Hiện comment":
                                                     "Xem báo cáo"
                                             }
                                         </span>

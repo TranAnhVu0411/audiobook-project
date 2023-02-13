@@ -10,11 +10,20 @@
         word-break: break-all;
         white-space: normal;
     }
-    .filter-config{
+    .query-config{
         display: flex;
-        flex-direction: row;
+        flex-direction: column;
         gap: 10px;
-        align-items: center;
+        .filter-config{
+            display: flex;
+            flex-direction: row;
+            gap: 10px;
+            align-items: center;
+        }
+    }
+    .result-number{
+        font-size: 20px;
+        border-bottom: 1px solid black;
     }
     .report-table{
         overflow: scroll;

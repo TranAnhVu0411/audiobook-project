@@ -13,7 +13,6 @@ import { getRole } from '../../context/role';
 
 const Index = () => {
     const [books, setBooks] = useState([]);
-    const [pageCount, setPageCount] = useState(0);
     const [isLoad, setIsLoad] = useState(false);
     // Lấy thông tin url/query
     const location = useLocation();
@@ -23,6 +22,8 @@ const Index = () => {
     // Phân trang
     const [pageOffset, setPageOffset] = useState(1);
     const [totalItem, setTotalItem] = useState(0);
+    const [pageCount, setPageCount] = useState(0);
+    
     const navigate = useNavigate();
     // Danh sách sách ưa thích
     const [favouriteList, setFavouriteList] = useState([])

@@ -9,8 +9,17 @@ import 'react-tabs/style/react-tabs.css';
 import ReportList from "./ReportList/ReportList";
 
 const CommentManagement = () => {
-    const [comments, setComments] = useState({available: [], unavailable: [], pending: []})
-    const [reports, setReports] = useState({notchecked: [], checked: []});
+    const [comments, setComments] = useState([])
+    const [commentFilter, setCommentFilter] = useState(0)
+    const [commentPageOffset, setCommentPageOffset] = useState(1); // Trang hiện tại của comment
+    const [commentTotalItem, setCommentTotalItem] = useState(0); // Tổng số comment
+    const [commentPageCount, setCommentPageCount] = useState(0); // Tổng số trang
+
+    const [reports, setReports] = useState([]);
+    const [reportFilter, setReportFilter] = useState(0)
+    const [reportPageOffset, setReportPageOffset] = useState(1); // Trang hiện tại của report
+    const [reportTotalItem, setReportTotalItem] = useState(0); // Tổng số report
+    const [reportPageCount, setReportPageCount] = useState(0); // Tổng số trang
     const [isLoad, setIsLoad] = useState(false);
     
     const [changeComment, setChangeComment] = useState(false) // Tham số trigger useEffect
@@ -20,23 +29,32 @@ const CommentManagement = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            let commentsRes = await main_axios_instance.get(`/comment/all`);
-            let reportsRes = await main_axios_instance.get(`/report/all`);
-            setComments({
-                available: commentsRes.data.available,
-                unavailable: commentsRes.data.unavailable,
-                pending: commentsRes.data.pending
-            })
-            setReports({
-                notchecked: reportsRes.data.notchecked,
-                checked: reportsRes.data.checked
-            })
+            let commentsRes = await main_axios_instance.get(`/comment/all?filter=${commentFilter}&page=${commentPageOffset}`);
+            setComments(commentsRes.data.comments)
+            setCommentTotalItem(commentsRes.data.total)
+            setCommentPageCount(commentsRes.data.pageCount)
+
+            let reportsRes = await main_axios_instance.get(`/report/all?filter=${reportFilter}&page=${reportPageOffset}`);
+            console.log(reportsRes.data)
+            setReports(reportsRes.data.reports)
+            setReportTotalItem(reportsRes.data.total)
+            setReportPageCount(reportsRes.data.pageCount)
             setIsLoad(true)
         }
         fetchData();
         setIsLoad(true)
         setChangeComment(false);
     }, [changeComment]);
+
+    const handleCommentQuery = (pageOffset, filter) => {
+        setCommentPageOffset(pageOffset)
+        setCommentFilter(filter)
+    }
+
+    const handleReportQuery = (pageOffset, filter) => {
+        setReportPageOffset(pageOffset)
+        setReportFilter(filter)
+    }
 
     if (isLoad){
         return (
@@ -60,10 +78,25 @@ const CommentManagement = () => {
                             </Tab>
                         </TabList>
                         <TabPanel>
-                            <CommentList comments={comments} reports={reports.notchecked} handleCommentChange={handleCommentChange}/>
+                            <CommentList 
+                                comments={comments} 
+                                filter = {commentFilter}
+                                pageOffset = {commentPageOffset}
+                                totalItem = {commentTotalItem}
+                                pageCount = {commentPageCount}
+                                handleCommentQuery={handleCommentQuery} 
+                                handleCommentChange={handleCommentChange}
+                            />
                         </TabPanel>
                         <TabPanel>
-                            <ReportList reports={reports} handleCommentChange={handleCommentChange} />
+                            <ReportList 
+                                reports={reports}
+                                filter = {reportFilter}
+                                pageOffset = {reportPageOffset}
+                                totalItem = {reportTotalItem}
+                                pageCount = {reportPageCount}
+                                handleReportQuery={handleReportQuery} 
+                                handleCommentChange={handleCommentChange} />
                         </TabPanel>
                     </Tabs>
                 </div>

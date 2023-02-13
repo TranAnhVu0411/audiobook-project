@@ -16,7 +16,8 @@ import RatingWrite from "./Rating/RatingWrite/RatingWrite"
 import RatingStat from "./Rating/RatingStat/RatingStat";
 import ListChapter from "./ListChapter/ListChapter";
 
-import Select from 'react-select';
+import Pagination from 'react-responsive-pagination';
+import '../../util/stylePagination.scss';
 
 const cat2url = {
     'Kinh doanh': 'kinh_doanh',
@@ -36,7 +37,12 @@ const BookInfo = () => {
 
     // Thông tin dành cho User/Guest
     const [book, setBook] = useState({}); // Thông tin sách
+    
     const [comments, setComments] = useState([]) // List comment
+    const [pageOffset, setPageOffset] = useState(1); // Trang hiện tại của comment
+    const [totalItem, setTotalItem] = useState(0); // Tổng số comment
+    const [pageCount, setPageCount] = useState(0); // Tổng số trang
+
     const [userRating, setUserRating] = useState([]) // Nếu rating tồn tại => update, ngược lại => create
     const [bookRating, setBookRating] = useState(null); // Thông số rating của sách
     const [chapters, setChapters] = useState([]) // List chapters
@@ -47,7 +53,6 @@ const BookInfo = () => {
         file: null,
         url: null
     })
-    const [reports, setReport] = useState([])
 
     // Thông tin yêu thích (true là đã thích, false là chưa thích)
     const [isFavourite, setIsFavourtite] = useState(false)
@@ -68,8 +73,11 @@ const BookInfo = () => {
             setBook(bookRes.data);
 
             // Lấy thông tin comment
-            const commentRes = await main_axios_instance.get(`/comment/book/${bookId}`)
-            setComments(commentRes.data)
+            const commentRes = await main_axios_instance.get(`/comment/book/${bookId}?page=${pageOffset}&role=${getRole(currentUser)}`)
+            setComments(commentRes.data['comments'])
+            // setPageOffset(1)
+            setPageCount(commentRes.data['pageCount'])
+            setTotalItem(commentRes.data['total'])
 
             // Lấy thông tin rating người dùng
             if (getRole(currentUser)!=='guest'){
@@ -108,12 +116,9 @@ const BookInfo = () => {
                 }else{
                     setPdf({file: null, url: null})
                 }
-                const reportRes = await main_axios_instance.get(`/report/book/${bookId}`)
-                setReport(reportRes.data)
             }else{
                 setBookPdfStatus(false)
                 setPdf({file: null, url: null})
-                setReport([])
             }
             setIsLoad(true);
           } catch (err) {
@@ -153,22 +158,23 @@ const BookInfo = () => {
     }
 
     // Xử lý comment (Khi thêm comment mới hoặc update comment)
-    // Cập nhật lại danh sách comment nếu comment thay đổi (Thêm/Edit)
+    // Cập nhật lại danh sách comment nếu comment thay đổi (Thêm/Edit/Chuyển trang)
     const [changeComment, setChangeComment] = useState(false) // Tham số trigger useEffect
-    // Comment filtering
-    const filterOptions = [  
-        { value: 0, label: 'Toàn bộ comment' },
-        { value: 1, label: 'Comment bị báo cáo' },
-        { value: 2, label: 'Comment chưa bị báo cáo' },
-        { value: 3, label: 'Comment ẩn' },
-    ];
 
-    const [commentFilter, setCommentFilter] = useState(filterOptions[0])
+    const handlePageChange = page => {
+        console.log('page',page)
+        setPageOffset(page);
+        setChangeComment(true);
+    };
+
     useEffect(() => {
         const fetchCommentData = async () => {
             try {
-                const commentRes = await main_axios_instance.get(`/comment/book/${bookId}`)
-                setComments(commentRes.data)
+                const commentRes = await main_axios_instance.get(`/comment/book/${bookId}?page=${pageOffset}&role=${getRole(currentUser)}`)
+                setComments(commentRes.data['comments'])
+                setPageOffset(pageOffset)
+                setPageCount(commentRes.data['pageCount'])
+                setTotalItem(commentRes.data['total'])
             } catch (err) {
                 console.log(err);
             }
@@ -176,10 +182,6 @@ const BookInfo = () => {
         fetchCommentData();
         setChangeComment(false);
     }, [changeComment, bookId])
-    
-    const handleFilter = filter => {
-        setCommentFilter(filter);
-    }
 
     const handleCommentChange = () => {
         setChangeComment(true)
@@ -223,10 +225,8 @@ const BookInfo = () => {
         try{
             if(isFavourite){
                 const res = await main_axios_instance.delete(`/favourite/delete?book=${bookId}&user=${currentUser.info._id}`);
-                console.log(res)
             }else{
                 const res = await main_axios_instance.post('/favourite/create', {book: bookId, user: currentUser.info._id});
-                console.log(res)
             }
             setIsFavourtite(!isFavourite)
         }catch(error){
@@ -342,21 +342,24 @@ const BookInfo = () => {
                 <div className="comment">
                     <h2>Bình luận</h2>
                     {getRole(currentUser) === 'admin' ? (
-                        <Select
-                            className="filter-options"
-                            classNamePrefix="select"
-                            name="color"
-                            options={filterOptions}
-                            value={commentFilter}
-                            onChange = {handleFilter}
-                        />
+                        <></>
                     ):(
                         <>
                             <CommentWrite book={book} handleCommentChange={handleCommentChange} />
                             <div className="seperator-comment-section"></div>
                         </>
                     )}
-                    <CommentList comments={comments} commentFilter={commentFilter} handleCommentChange={handleCommentChange} reports={reports} />
+                    <div>
+                        <Pagination
+                            total={pageCount}
+                            current={pageOffset}
+                            onPageChange={page => {handlePageChange(page)}}
+                        />
+                    </div>
+                    <div className='result-number'>
+                        {totalItem} bình luận  
+                    </div>
+                    <CommentList comments={comments} handleCommentChange={handleCommentChange} />
                 </div>
             </div>
         )   

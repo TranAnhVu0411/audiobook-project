@@ -1,8 +1,11 @@
 const mongoose = require('mongoose'),
 Comment = require('../models/comment'),
 User = require('../models/user'),
-Report = require('../models/report');
-
+Report = require('../models/report'),
+filterOptions = { 
+    0: 'notchecked',
+    1: 'checked'
+};;
 
 module.exports = {
     create: (req, res) => {
@@ -60,21 +63,22 @@ module.exports = {
         })
     },
     index: (req, res) => {
-        Report.find({sort: { 'createdAt' : -1 }}).populate('comment').populate('reportedUser').then(
+        let perPage = 4;
+        let page = Number(req.query.page)||1;
+
+        Report.find({status: filterOptions[Number(req.query.filter)]}, {}, {sort: { 'createdAt' : -1 }}).skip((perPage*page)-perPage).limit(perPage).populate('comment').populate('reportedUser').then(
             reports => {
-                let notcheckedResult = reports.reduce((notcheckedResult, report) => {
-                    if (report.status === 'notchecked'){
-                        notcheckedResult.push(report)
+                Report.countDocuments({status: filterOptions[Number(req.query.filter)]}).then(
+                    count => {
+                        res.status(200).json({
+                            reports: reports, 
+                            pageCount: Math.ceil(count / perPage), 
+                            total: count
+                        })
                     }
-                    return notcheckedResult
-                }, [])
-                let checkedResult = reports.reduce((checkedResult, report) => {
-                    if (report.status === 'checked'){
-                        checkedResult.push(report)
-                    }
-                    return checkedResult
-                }, [])
-                res.status(200).json({notchecked: notcheckedResult, checked: checkedResult})
+                ).catch(error => {
+                    res.status(500).json({error: error})
+                })
             }
         ).catch(error => {
             res.status(500).json({error: error})

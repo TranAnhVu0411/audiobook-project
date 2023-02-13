@@ -4,30 +4,26 @@ import Select from 'react-select';
 import './style.scss';
 import moment from "moment";
 import ReportInfo from '../../BookInfo/Comment/Report/ReportInfo/ReportInfo';
+import Pagination from 'react-responsive-pagination';
+import '../../../util/stylePagination.scss';
 
 const ReportList = (props) => {
+    // Thay đổi filter
     const filterOptions = [  
         { value: 0, label: 'Báo cáo chưa check' },
         { value: 1, label: 'Báo cáo đã check' },
     ];
-    const [filter, setFilter] = useState(filterOptions[0])
-    const [showReports, setShowReports] = useState(props.reports['notchecked'])
-    useEffect(() => {
-        if (filter.value===0){
-            setShowReports(props.reports['notchecked'])
-        }else if (filter.value===1){
-            setShowReports(props.reports['checked'])
-        }
-    }, [props.reports])
 
-    const handleFilter = currentFilter => {
-        if (currentFilter.value===0){
-            setShowReports(props.reports['notchecked'])
-        }else if (currentFilter.value===1){
-            setShowReports(props.reports['checked'])
-        }
-        setFilter(currentFilter);
+    const handleFilter = filter => {
+        props.handleReportQuery(1, filter.value)
+        props.handleCommentChange()
     }
+
+    // Thay đổi page
+    const handlePageChange = page => {
+        props.handleReportQuery(page, props.filter)
+        props.handleCommentChange()
+    };
 
     const [reportInfoView, setReportInfoView] = useState(false);
     const [report, setReport] = useState(null);
@@ -38,16 +34,27 @@ const ReportList = (props) => {
     
     return (
         <div className='report-list'>
-            <div className='filter-config'>
-                <span>Lọc báo cáo theo:</span>
-                <Select
-                    className="filter-options"
-                    classNamePrefix="select"
-                    name="color"
-                    options={filterOptions}
-                    value={filter}
-                    onChange = {handleFilter}
+            <div className='query-config'>
+                <div className='filter-config'>
+                <span>Lọc comment theo:</span>
+                    <Select
+                        className="filter-options"
+                        classNamePrefix="select"
+                        name="color"
+                        options={filterOptions}
+                        value={filterOptions[props.filter]}
+                        onChange = {handleFilter}
+                    />
+                </div>
+                <Pagination
+                    className='pagination'
+                    total={props.pageCount}
+                    current={props.pageOffset}
+                    onPageChange={page => {handlePageChange(page)}}
                 />
+            </div>
+            <div className='result-number'>
+                {props.totalItem} kết quả  
             </div>
             <div className='report-table'>
                 <table>
@@ -60,7 +67,7 @@ const ReportList = (props) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {showReports.map((report) => {
+                        {props.reports.map((report) => {
                             return(
                             <tr key={report._id}>
                                 <td>
