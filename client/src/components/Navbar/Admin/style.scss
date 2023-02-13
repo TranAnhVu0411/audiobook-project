@@ -19,7 +19,7 @@
             color: orange;
         }
     }
-    .book-management{
+    .dropdown-nav{
         .nav-link{
             padding: 0;
             border: none;
@@ -33,7 +33,7 @@
                 font-size: 15px;
             }
         }
-        .book-management-content{
+        .dropdown-nav-content{
             display: none;
             position: absolute;
             top: 100px;
@@ -44,7 +44,7 @@
             min-width: 160px;
             z-index: 1;
             font-size: 15px;
-            .book-management-link{
+            .dropdown-nav-link{
                 text-decoration:none;
                 color: inherit;
                 display: flex;
@@ -71,9 +71,9 @@
         .nav-link{
             border-top: black solid 1px;
         }
-        .book-management{
+        .dropdown-nav{
             border-top: black solid 1px;
-            .book-management-content{
+            .dropdown-nav-content{
                 background-color: #f0f2f5;
                 position: inherit;
                 box-shadow: none;
