@@ -65,11 +65,13 @@ const UserInfo = () => {
         return(
             <div className='user-info'>
                 <div className='user-info-detail'>
-                    <img alt="preview" src={avatar.url} />
-                    {currentUser.info._id===userId?
-                        <button onClick={() => setIsViewerOpen(true)}>Cập nhật thông tin</button>
-                        :<></>
-                    }
+                    <div className='user-image-info'>
+                        <img alt="preview" src={avatar.url} />
+                        {currentUser.info._id===userId?
+                            <button onClick={() => setIsViewerOpen(true)}>Cập nhật thông tin</button>
+                            :<></>
+                        }
+                    </div>
                     <div className='user-text-info'>
                         <div className='user-text'>
                             <label>Username: </label>

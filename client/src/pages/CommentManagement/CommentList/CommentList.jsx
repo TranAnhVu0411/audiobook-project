@@ -100,7 +100,7 @@ const CommentList = (props) => {
                             return(
                             <tr key={comment.comment._id}>
                                 <td>
-                                    <Link to={`/book/${comment.comment.book._id}`}>
+                                    <Link to={`/book/info/${comment.comment.book._id}`}>
                                         {comment.comment.book.title}
                                     </Link>
                                 </td>

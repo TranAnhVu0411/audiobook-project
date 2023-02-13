@@ -72,7 +72,7 @@ const ReportInfo = (props) => {
                     </div>
                     <div className='report-info-link'>
                         <Link to={`/user/${props.report.comment.user}`}>Thông tin người vi phạm</Link>
-                        <Link to={`/user/${props.report.comment.book}`}>Thông tin sách</Link>
+                        <Link to={`/book/info/${props.report.comment.book}`}>Thông tin sách</Link>
                     </div>
                 </div>
                 <div className='report-info-button'>

@@ -4,7 +4,7 @@ import './style.scss';
 import {getBackgroundColor, getBorderColor} from '../../util/category-color' 
 import {v4 as uuidv4} from "uuid";
 import { AuthContext } from "../../context/AuthContextProvider";
-import { AiOutlineHeart, AiFillHeart, AiFillStar, AiOutlineComment } from "react-icons/ai"
+import { AiOutlineHeart, AiFillHeart, AiFillStar, AiOutlineComment, AiOutlineEdit } from "react-icons/ai"
 import ReactTooltip from 'react-tooltip';
 import { getRole } from '../../context/role';
 import {main_axios_instance} from '../../service/custom-axios';
@@ -107,7 +107,7 @@ const BookCard = (props) => {
         if (getRole(currentUser) === 'guest'){
             return (
                 <>
-                    <button data-tip data-for="bookcard-tooltip" onClick = {() => navigate('/login')}>
+                    <button style={{color:"crimson"}} data-tip data-for="bookcard-tooltip" onClick = {() => navigate('/login')}>
                         <AiOutlineHeart/>
                     </button>
                     <ReactTooltip id='bookcard-tooltip' effect="solid">
@@ -117,12 +117,16 @@ const BookCard = (props) => {
             )
         }else if (getRole(currentUser) === 'user'){
             return(
-                <button onClick={handleFavourite}>
+                <button style={{color:"crimson"}} onClick={handleFavourite}>
                     <HandleFavouriteIcon/>
                 </button>
             )
         }else{
-            return(<></>)
+            return(
+                <button onClick={() => navigate(`/book/info/${props.book._id}/update`)}>
+                    <AiOutlineEdit/>
+                </button>
+            )
         }
     }
 
