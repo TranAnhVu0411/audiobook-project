@@ -44,9 +44,22 @@ const ListChapter = (props) => {
                         </Fragment> 
                         :
                         <Fragment>
-                            <button onClick={() => navigate(`/chapter/${chapter_id}`)}>
-                                <FaHeadphonesAlt/>
-                            </button>
+                            {
+                                currentUser.info.status === "available" ? (
+                                    <button onClick={() => navigate(`/chapter/${chapter_id}`)}>
+                                        <FaHeadphonesAlt/>
+                                    </button>
+                                ):(
+                                    <>
+                                        <button data-tip data-for="chapter-tooltip" title="Đọc audio book">
+                                            <FaHeadphonesAlt/>
+                                        </button>
+                                        <ReactTooltip id='chapter-tooltip' effect="solid">
+                                            <span>Bạn không thực hiện được chức năng này do tài khoản của bạn đã bị khoá</span>
+                                        </ReactTooltip>
+                                    </>
+                                )
+                            }
                         </Fragment> 
                     }
                 </div>

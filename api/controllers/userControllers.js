@@ -62,14 +62,23 @@ module.exports = {
                 }
             ).catch(
                 error=>{
-                    console(1)
                     console.log(error)
                     res.status(500).json(error);
                 }
             );
         }).catch(
             error=>{
-                console(2)
+                res.status(500).json(error);
+            }
+        );
+    },
+    updateViolatedCountStatus: (req, res) => {
+        User.findByIdAndUpdate(req.params.id, {$set:req.body}).then(
+            user => {
+                res.status(200).json({user: user});
+            }
+        ).catch(
+            error=>{
                 console.log(error)
                 res.status(500).json(error);
             }

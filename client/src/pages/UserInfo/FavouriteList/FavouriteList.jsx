@@ -31,7 +31,7 @@ const FavouriteList = (props) => {
                         <div className='favourite-item'>
                             <div className='favourite-book-info'>
                                 <Link className='favourite-link' to={`/book/info/${favourite.book._id}`}>
-                                    <img src={favourite.book.image}/>
+                                    <img src={favourite.book.image} alt="PreviewImage"/>
                                 </Link>
                                 <Link className='favourite-link' to={`/book/info/${favourite.book._id}`}>
                                     <h4>{favourite.book.title}</h4>

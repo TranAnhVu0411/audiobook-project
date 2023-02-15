@@ -29,6 +29,11 @@ const userSchema = new Schema({
         type: String,
         default: 'available',
         required: true
+    },
+    violatedCount: {
+        type: Number,
+        default: 0,
+        required: true
     }
 },{
     timestamps: true,

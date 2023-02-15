@@ -27,6 +27,8 @@ const UserList = () => {
         email: searchParams.get('email')===null?"":searchParams.get('email')
     })
 
+    const [isStatusChange, setIsStatusChange] = useState(false);
+
     useEffect(() => {
         const fetchData = async () => {
             let currentPage = 1;
@@ -43,8 +45,9 @@ const UserList = () => {
             setPageCount(res.data.pageCount);
         }
         fetchData();
-        setIsLoad(true)
-    }, [searchQuery, pageOffset, path]);
+        setIsStatusChange(false);
+        setIsLoad(true);
+    }, [searchQuery, pageOffset, isStatusChange, path]);
 
     const handlePageChange = page => {
         let newPath = ''
@@ -108,6 +111,18 @@ const UserList = () => {
         navigate(`/userlist`)
     }
 
+    const handleChangeStatus = async (user) => {
+        try{
+            const userRes = await main_axios_instance.put(`/user/updatestatus/${user._id}`, {
+                'status': user.status==="available" ? "unavailable":"available"
+            })
+            setIsStatusChange(true)
+        }catch(error){
+            console.log(error)
+        }
+    }
+
+
     if (isLoad){
         return (
             <div className="user-list">
@@ -152,8 +167,10 @@ const UserList = () => {
                         <thead>
                             <tr>
                                 <th style={{width:"15%"}}>Username</th>
-                                <th style={{width:"70%"}}>Email</th>
+                                <th style={{width:"40%"}}>Email</th>
                                 <th style={{width:"15%"}}>Role</th>
+                                <th style={{width:"15%"}}>Số lần vi phạm</th>
+                                <th style={{width:"15%"}}>&nbsp;</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -167,6 +184,12 @@ const UserList = () => {
                                     </td>
                                     <td>{user.email}</td>
                                     <td>{user.role}</td>
+                                    <td>{user.violatedCount}</td>
+                                    <td>
+                                        <button onClick = {() => {handleChangeStatus(user)}}>
+                                            {user.status==="available"?"Khoá tài khoản": "Mở khoá tài khoản"}
+                                        </button>
+                                    </td>
                                 </tr>
                                 )
                             })}

@@ -31,7 +31,7 @@ const FilterBar = (props) => {
 
     const handleFilter = filter => {
         setFilter(filter);
-        navigate(`${props.path}?&sort=${filter.value}`)
+        navigate(`${props.path}?sort=${filter.value}`)
     }
 
     return(

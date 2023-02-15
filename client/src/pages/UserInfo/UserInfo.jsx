@@ -81,10 +81,14 @@ const UserInfo = () => {
                             <label>Email: </label>
                             <span>{user.email}</span>
                         </div>
-                        <div className='user-text'>
-                            <label>Số lần vi phạm: </label>
-                            <span>{user.violatedCount}</span>
-                        </div>
+                        {currentUser.info._id===userId?
+                            (<div className='user-text'>
+                                <label>Số lần vi phạm: </label>
+                                <span>{user.violatedCount}</span>
+                            </div>):
+                            <></>
+                        }
+                        
                     </div>
                 </div>
                 

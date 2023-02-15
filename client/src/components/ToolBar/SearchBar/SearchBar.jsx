@@ -113,7 +113,9 @@ const SearchBar = (props) => {
 
     // Xử lý reset button
     const handleReset = () => {
-        setCategory(categoryInitialState)
+        let resetState = [] 
+        categoryOption.forEach(category => resetState.push({id: category, state: false}));
+        setCategory(resetState)
         setFilter(filterOptions[0])
         if (getRole(currentUser) !== 'admin') {
             navigate(`/book/advance-search`)

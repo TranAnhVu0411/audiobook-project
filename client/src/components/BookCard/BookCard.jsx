@@ -116,11 +116,24 @@ const BookCard = (props) => {
                 </>
             )
         }else if (getRole(currentUser) === 'user'){
-            return(
-                <button style={{color:"crimson"}} onClick={handleFavourite}>
-                    <HandleFavouriteIcon/>
-                </button>
-            )
+            if (currentUser.info.status === 'available'){
+                return(
+                    <button style={{color:"crimson"}} onClick={handleFavourite}>
+                        <HandleFavouriteIcon/>
+                    </button>
+                )
+            }else{
+                return (
+                    <>
+                        <button style={{color:"crimson"}} data-tip data-for="bookcard-tooltip">
+                            <AiOutlineHeart/>
+                        </button>
+                        <ReactTooltip id='bookcard-tooltip' effect="solid">
+                            <span>Bạn không thực hiện được chức năng này do tài khoản của bạn đã bị khoá</span>
+                        </ReactTooltip>
+                    </>
+                )
+            }
         }else{
             return(
                 <button onClick={() => navigate(`/book/info/${props.book._id}/update`)}>

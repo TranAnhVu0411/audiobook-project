@@ -40,6 +40,9 @@ const CommentList = (props) => {
                 const commentRes = await main_axios_instance.put(`/comment/update/${comment.comment._id}`, {
                     'status': 'unavailable'
                 });
+                const userRes = await main_axios_instance.put(`/user/updatestatus/${comment.comment.user._id}`, {
+                    'violatedCount': comment.comment.user.violatedCount+1
+                })
                 toast.success("Cập nhật đánh giá thành công", {position: toast.POSITION.TOP_CENTER});
                 props.handleCommentChange()
             }catch(error){

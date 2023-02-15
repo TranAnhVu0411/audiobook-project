@@ -25,6 +25,7 @@ import AudioBook from './pages/AudioBook/AudioBook';
 import { Worker } from '@react-pdf-viewer/core';
 import UserInfo from './pages/UserInfo/UserInfo';
 import UserList from './pages/UserList/UserList';
+import CommentManagement from './pages/CommentManagement/CommentManagement';
 
 function App() {
   return (
@@ -57,6 +58,7 @@ function App() {
                   <Route path="/book/info/:id/update" element={<BookWrite />} /> 
                   <Route path="/userlist" element={<UserList />} />
                   <Route path="/userlist/page/:page" element={<UserList />} />
+                  <Route path="/comment" element={<CommentManagement />} />
               </Route>
               <Route path="/" element={<Home />} />
               <Route path="*" element={<Error />}/>

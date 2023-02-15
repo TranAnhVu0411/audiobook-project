@@ -35,6 +35,15 @@ const CommentItem = (props) => {
     // Thay đổi format của text
     const handleCommentText = () => {
         if(getRole(currentUser)!=='admin'){
+            if (props.comment.user.status === 'unavailable'){
+                return (
+                    <div className='comment-text'>
+                        <p className='warning'>
+                            Bình luận bị ẩn do tài khoản bị khoá
+                        </p> 
+                    </div> 
+                )
+            }
             if(props.comment.status==='available'){
                 return (editView ? (
                     <>
@@ -62,9 +71,10 @@ const CommentItem = (props) => {
                 return(<>
                     <div className='comment-text'>
                         <p className='warning'>
-                            {props.comment.status==='pending'?
-                            "Bình luận đang trong quá trình xem xét báo cáo":
-                            "Bình luận bị ẩn do vi phạm điều khoản"}
+                            {props.comment.status ==='pending'?
+                                "Bình luận đang trong quá trình xem xét báo cáo" :
+                                "Bình luận bị ẩn do vi phạm điều khoản"
+                            }
                         </p> 
                     </div> 
                 </>)
@@ -90,6 +100,9 @@ const CommentItem = (props) => {
                 const commentRes = await main_axios_instance.put(`/comment/update/${props.comment._id}`, {
                     'status': 'unavailable'
                 });
+                const userRes = await main_axios_instance.put(`/user/updatestatus/${props.comment.user._id}`, {
+                    'violatedCount': props.comment.user.violatedCount+1
+                })
                 toast.success("Cập nhật đánh giá thành công", {position: toast.POSITION.TOP_CENTER});
                 props.handleCommentChange()
             }catch(error){
@@ -129,9 +142,13 @@ const CommentItem = (props) => {
                     <div>
                         {moment(props.comment.updatedAt).format("DD/MM/YY HH:mm")}
                     </div>
-                    {(getRole(currentUser)==='user' && currentUser.info._id !== props.comment.user._id && props.comment.status==='available') ? (
+                    {(getRole(currentUser)==='user' && currentUser.info._id !== props.comment.user._id && props.comment.status==='available' && props.comment.user.status==="available") ? (
                             <>
-                                <button onClick={() => setReportView(true)}>
+                                <button 
+                                    onClick={() => setReportView(true)}
+                                    title={`${currentUser.info.status==="unavailable"?"Bạn không thực hiện được chức năng này do tài khoản của bạn đã bị khoá":""}`}
+                                    disabled={currentUser.info.status==="unavailable"}
+                                >
                                     <span>Báo cáo</span>
                                 </button>
                             </>
@@ -142,7 +159,11 @@ const CommentItem = (props) => {
                     
                     {(getRole(currentUser)==='user' && currentUser.info._id === props.comment.user._id && !editView && props.comment.status==='available') ? (
                             <>
-                                <button onClick = {() => {setEditView(true);}}>
+                                <button 
+                                    onClick = {() => {setEditView(true);}}
+                                    title={`${currentUser.info.status==="unavailable"?"Bạn không thực hiện được chức năng này do tài khoản của bạn đã bị khoá":""}`}
+                                    disabled={currentUser.info.status==="unavailable"}
+                                >
                                     <span>Chỉnh sửa</span>
                                 </button>
                             </>

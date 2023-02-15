@@ -49,11 +49,26 @@ const RatingWrite = (props) => {
                         </ReactTooltip>
                     </>
                 ) : (
-                    <Rating
-                        className="rating-input"
-                        initialValue={rating}
-                        onClick={handleRating}
-                    />
+                    currentUser.info.status==="unavailable" ? (
+                        <>
+                            <div data-tip data-for="rating-tooltip">
+                                <Rating
+                                    className="rating-input"
+                                    initialValue={rating}
+                                    readonly = {true}
+                                />
+                            </div>
+                            <ReactTooltip id='rating-tooltip' effect="solid">
+                                <span>Bạn không thực hiện được chức năng này do tài khoản của bạn đã bị khoá</span>
+                            </ReactTooltip>
+                        </>
+                    ) : (
+                        <Rating
+                            className="rating-input"
+                            initialValue={rating}
+                            onClick={handleRating}
+                        />
+                    )
                 )}   
         </div>
     )

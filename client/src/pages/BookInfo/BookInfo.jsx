@@ -247,11 +247,24 @@ const BookInfo = () => {
                 </>
             )
         }else if (getRole(currentUser) === 'user'){
-            return(
-                <button style={isFavourite?{backgroundColor: "crimson", border: "1px solid white", color: "white"}:{backgroundColor: "white", border: "1px solid crimson", color: "crimson"}} onClick={handleFavourite}>
-                    <HandleFavouriteIcon/>
-                </button>
-            )
+            if (currentUser.info.status === 'available'){
+                return(
+                    <button style={isFavourite?{backgroundColor: "crimson", border: "1px solid white", color: "white"}:{backgroundColor: "white", border: "1px solid crimson", color: "crimson"}} onClick={handleFavourite}>
+                        <HandleFavouriteIcon/>
+                    </button>
+                )
+            }else{
+                return (
+                    <>
+                        <button style={{backgroundColor: "white", border: "1px solid crimson", color: "crimson"}} data-tip data-for="bookcard-tooltip">
+                            <AiOutlineHeart/> <span>Yêu thích</span>
+                        </button>
+                        <ReactTooltip id='bookcard-tooltip' effect="solid">
+                            <span>Bạn không thực hiện được chức năng này do tài khoản của bạn đã bị khoá</span>
+                        </ReactTooltip>
+                    </>
+                )
+            }
         }else{
             return(<></>)
         }

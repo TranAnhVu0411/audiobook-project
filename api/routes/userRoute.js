@@ -5,6 +5,7 @@ router = express.Router();
 
 router.get('/find', userController.index);
 router.get("/total", userController.total);
+router.put("/updatestatus/:id", userController.updateViolatedCountStatus);
 router.put("/update/:id", upload.single('image'), userController.update);
 router.get('/:id', userController.show)
 

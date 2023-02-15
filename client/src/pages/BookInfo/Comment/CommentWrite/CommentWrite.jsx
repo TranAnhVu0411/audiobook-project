@@ -54,7 +54,7 @@ const CommentWrite = (props) => {
             }    
         }
     }
-    
+
     return (
         <div className='comment-write'>
             
@@ -72,15 +72,30 @@ const CommentWrite = (props) => {
                         </ReactTooltip>
                     </>
                 ) : (
-                    <div className="comment-input" data-tip data-for="comment-tooltip">
-                        <ReactQuill 
-                            placeholder="Mời bạn thảo luận, bình luận có văn hoá để tránh bị khoá tài khoản" 
-                            className="editor" theme="snow" 
-                            value={comment} 
-                            onChange={setComment}
-                            onKeyDown={handlePostComment}
-                        />
-                    </div>
+                    currentUser.info.status === 'unavailable' ? (
+                        <>
+                            <div className="comment-input" data-tip data-for="comment-tooltip">
+                                <ReactQuill 
+                                    placeholder="Mời bạn thảo luận, bình luận có văn hoá để tránh bị khoá tài khoản" 
+                                    className="editor" theme="snow" 
+                                    readOnly={true}
+                                />
+                            </div>
+                            <ReactTooltip id='comment-tooltip' effect="solid">
+                                <span>Bạn không thực hiện được chức năng này do tài khoản của bạn đã bị khoá</span>
+                            </ReactTooltip>
+                        </>
+                    ) : (
+                        <div className="comment-input" data-tip data-for="comment-tooltip">
+                            <ReactQuill 
+                                placeholder="Mời bạn thảo luận, bình luận có văn hoá để tránh bị khoá tài khoản" 
+                                className="editor" theme="snow" 
+                                value={comment} 
+                                onChange={setComment}
+                                onKeyDown={handlePostComment}
+                            />
+                        </div>
+                    )
                 )}
         </div>
     )

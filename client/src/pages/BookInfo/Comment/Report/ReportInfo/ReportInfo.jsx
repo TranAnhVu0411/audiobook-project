@@ -34,6 +34,11 @@ const ReportInfo = (props) => {
                 'status': 'unavailable'
             });
             const infoRes = await main_axios_instance.get(`/user/${props.report.comment.user}`)
+            console.log(infoRes.data)
+            const userRes = await main_axios_instance.put(`/user/updatestatus/${props.report.comment.user}`, {
+                'violatedCount': infoRes.data.user.violatedCount+1
+            })
+            console.log(userRes)
             toast.success("Cập nhật đánh giá thành công", {position: toast.POSITION.TOP_CENTER});
             props.onClose()
             props.handleCommentChange()
