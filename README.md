@@ -8,6 +8,7 @@ git clone https://github.com/TranAnhVu0411/ocr-pdf-audio-service and complete th
 install mongodb
 
 go to api
++ add file .env, (Content inside: PORT=8800)
 + npm install
 + npm start
 
