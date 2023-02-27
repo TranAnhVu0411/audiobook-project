@@ -40,18 +40,21 @@ module.exports = {
                             }
                         ).catch(
                             error=>{
+                                console.log(error)
                                 res.status(500).json(error);
                             }
                         );
                     }
                 ).catch(
                     error=>{
+                        console.log(error)
                         res.status(500).json(error);
                     }
                 );
             }
         ).catch(
             error=>{
+                console.log(error)
                 res.status(500).json(error);
             }
         );
@@ -123,7 +126,7 @@ module.exports = {
     },
     index: (req, res) => {
         // Thiết lập số lượng sách trong 1 trang
-        let perPage = 20;
+        let perPage = 8;
         let page = req.query.page||1;
 
         let categorySearch = {}
@@ -148,6 +151,8 @@ module.exports = {
             }else if (req.query.sort == 1){
                 orderSearch = {sort: { 'createdAt' : 1 }}
             }
+        }else{
+            orderSearch = {sort: { 'createdAt' : -1 }}
         }
         Book.find(categorySearch, {}, orderSearch).skip((perPage*page)-perPage).limit(perPage).then(
             books => {
